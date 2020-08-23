@@ -43,11 +43,16 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   int _counter = 0;
+  var sessionsModel = SessionsModel();
 
   void _incrementCounter() {
     setState(() {
       _counter++;
     });
+  }
+
+  void _onTimerStopped(DateTime start, DateTime end) {
+    sessionsModel.addSession(Session(start, end));
   }
 
   @override
@@ -60,10 +65,14 @@ class _HomePageState extends State<HomePage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           children: <Widget>[
-            TimerWidget(),
-            ChangeNotifierProvider(
-              create: (context) => SessionsModel(),
-              child: Overview(),
+            TimerWidget(
+              onTimerStopped: _onTimerStopped,
+            ),
+            Expanded(
+              child: ChangeNotifierProvider.value(
+                value: sessionsModel,
+                child: Overview(),
+              ),
             ),
           ],
         ),

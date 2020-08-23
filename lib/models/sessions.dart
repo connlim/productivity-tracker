@@ -20,11 +20,13 @@ class SessionsModel extends ChangeNotifier {
 
   SessionsModel() {
     _items = [
-      new Session(DateTime.now(), DateTime.now().add(Duration(hours: 1))),
-      new Session(DateTime.now(), DateTime.now().add(Duration(hours: 1))),
-      new Session(DateTime.now(), DateTime.now().add(Duration(hours: 1))),
+      Session(DateTime.now(), DateTime.now().add(Duration(hours: 1))),
+      Session(DateTime.now(), DateTime.now().add(Duration(hours: 1))),
+      Session(DateTime.now(), DateTime.now().add(Duration(hours: 1))),
     ];
   }
+
+  List<Session> get sessions => _items;
 
   Session getSession(int index) {
     return _items[index];
@@ -51,9 +53,9 @@ class Session {
   Session.create(this.start);
   Session(this.start, this.end);
 
-  Duration get duration => start.difference(end);
+  Duration get duration => end.difference(start);
 
   String toString() {
-    return 'Start: ${start.toString()}. End: ${end.toString()}';
+    return 'Start: ${start.toString()}. End: ${end.toString()}. Duration: $duration';
   }
 }

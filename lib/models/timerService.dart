@@ -21,6 +21,11 @@ class TimerService extends ChangeNotifier {
   Stopwatch _watch;
   Timer _timer;
 
+  DateTime get startTime => _startTime;
+  DateTime _startTime = DateTime.now();
+
+  DateTime get endTime => _startTime.add(currentDuration);
+
   Duration get currentDuration => _currentDuration;
   Duration _currentDuration = Duration.zero;
 
@@ -39,6 +44,7 @@ class TimerService extends ChangeNotifier {
     if (_timer != null) return;
 
     _timer = Timer.periodic(Duration(seconds: 1), _onTick);
+    _startTime = DateTime.now();
     _watch.start();
 
     notifyListeners();
@@ -57,6 +63,7 @@ class TimerService extends ChangeNotifier {
     stop();
     _watch.reset();
     _currentDuration = Duration.zero;
+    _startTime = DateTime(0);
 
     notifyListeners();
   }

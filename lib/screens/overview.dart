@@ -25,14 +25,17 @@ class Overview extends StatefulWidget {
 class _OverviewState extends State<Overview> {
   @override
   Widget build(BuildContext context) {
-    var sessions = context.watch<SessionsModel>();
+    SessionsModel model = context.watch<SessionsModel>();
+    Iterable<Session> sessions = model.sessions.reversed;
 
     return ListView.builder(
       scrollDirection: Axis.vertical,
       shrinkWrap: true,
-      itemCount: sessions.count,
-      itemBuilder: (context, index) => Text(
-        sessions.getSession(index).toString(),
+      itemCount: sessions.length,
+      itemBuilder: (context, index) => ListTile(
+        title: Text(
+          sessions.elementAt(index).toString(),
+        ),
       ),
     );
   }

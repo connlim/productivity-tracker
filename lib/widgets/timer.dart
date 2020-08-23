@@ -19,14 +19,25 @@ import 'package:productivity_tracker/models/timerService.dart';
 import 'package:sprintf/sprintf.dart';
 
 class TimerWidget extends StatefulWidget {
+  final Function(DateTime, DateTime) onTimerStopped;
+  TimerWidget({this.onTimerStopped});
+
   @override
   _TimerWidgetState createState() => _TimerWidgetState();
 }
 
 class _TimerWidgetState extends State<TimerWidget> {
+  bool started = false;
+
   String _formatDuration(Duration duration) {
     return sprintf("%02d:%02d:%02d",
         [duration.inHours, duration.inMinutes % 60, duration.inSeconds % 60]);
+  }
+
+  void _stopTimer(TimerService timerService) {
+    timerService.stop();
+    widget.onTimerStopped(timerService.startTime, timerService.endTime);
+    timerService.reset();
   }
 
   @override
@@ -40,9 +51,18 @@ class _TimerWidgetState extends State<TimerWidget> {
                 .select((TimerService service) => service.currentDuration)),
             style: Theme.of(context).textTheme.headline1,
           ),
-          FlatButton(
-            child: Text('start'),
-            onPressed: () => context.read<TimerService>().start(),
+          RaisedButton(
+            child: Text(started ? 'Stop Timer' : 'Start Timer'),
+            color: started ? Colors.red : Colors.green,
+            onPressed: () {
+              if (started)
+                _stopTimer(context.read<TimerService>());
+              else
+                context.read<TimerService>().start();
+              setState(() {
+                started = !started;
+              });
+            },
           ),
         ],
       ),
