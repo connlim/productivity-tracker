@@ -12,12 +12,3 @@
 //
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
-import 'package:flutter/material.dart';
-import 'package:productivity_tracker/screens/app.dart';
-
-void main() {
-  runApp(
-    App(),
-  );
-}

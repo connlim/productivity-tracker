@@ -16,9 +16,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:productivity_tracker/themes.dart';
-import 'package:productivity_tracker/utils/timerService.dart';
-import 'package:provider/provider.dart';
-import 'timer.dart';
+import 'package:productivity_tracker/widgets/timer.dart';
 
 class App extends StatelessWidget {
   // This widget is the root of your application.
@@ -61,20 +59,8 @@ class _HomePageState extends State<HomePage> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             TimerWidget(),
-            Text(
-              'You have pushed the button this many times:',
-            ),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headline4,
-            ),
           ],
         ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: Icon(Icons.add),
       ),
     );
   }
