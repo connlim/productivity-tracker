@@ -14,9 +14,11 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import 'package:flutter/material.dart';
-
+import 'package:productivity_tracker/models/sessions.dart';
+import 'package:productivity_tracker/screens/overview.dart';
 import 'package:productivity_tracker/themes.dart';
 import 'package:productivity_tracker/widgets/timer.dart';
+import 'package:provider/provider.dart';
 
 class App extends StatelessWidget {
   // This widget is the root of your application.
@@ -56,9 +58,13 @@ class _HomePageState extends State<HomePage> {
       ),
       body: Center(
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.start,
           children: <Widget>[
             TimerWidget(),
+            ChangeNotifierProvider(
+              create: (context) => SessionsModel(),
+              child: Overview(),
+            ),
           ],
         ),
       ),

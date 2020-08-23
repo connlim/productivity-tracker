@@ -12,3 +12,28 @@
 //
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+import 'package:flutter/material.dart';
+import 'package:productivity_tracker/models/sessions.dart';
+import 'package:provider/provider.dart';
+
+class Overview extends StatefulWidget {
+  @override
+  _OverviewState createState() => _OverviewState();
+}
+
+class _OverviewState extends State<Overview> {
+  @override
+  Widget build(BuildContext context) {
+    var sessions = context.watch<SessionsModel>();
+
+    return ListView.builder(
+      scrollDirection: Axis.vertical,
+      shrinkWrap: true,
+      itemCount: sessions.count,
+      itemBuilder: (context, index) => Text(
+        sessions.getSession(index).toString(),
+      ),
+    );
+  }
+}
