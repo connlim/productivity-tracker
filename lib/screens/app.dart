@@ -42,17 +42,10 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  int _counter = 0;
-  var sessionsModel = SessionsModel();
-
-  void _incrementCounter() {
-    setState(() {
-      _counter++;
-    });
-  }
+  var sessionModel = SessionModel();
 
   void _onTimerStopped(DateTime start, DateTime end) {
-    sessionsModel.addSession(Session(start, end));
+    sessionModel.addSession(Session(start, end));
   }
 
   @override
@@ -70,7 +63,7 @@ class _HomePageState extends State<HomePage> {
             ),
             Expanded(
               child: ChangeNotifierProvider.value(
-                value: sessionsModel,
+                value: sessionModel,
                 child: Overview(),
               ),
             ),

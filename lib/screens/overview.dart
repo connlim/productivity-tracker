@@ -25,7 +25,7 @@ class Overview extends StatefulWidget {
 class _OverviewState extends State<Overview> {
   @override
   Widget build(BuildContext context) {
-    SessionsModel model = context.watch<SessionsModel>();
+    SessionModel model = context.watch<SessionModel>();
     Iterable<Session> sessions = model.sessions.reversed;
 
     return ListView.builder(

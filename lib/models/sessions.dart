@@ -15,10 +15,10 @@
 
 import 'package:flutter/cupertino.dart';
 
-class SessionsModel extends ChangeNotifier {
+class SessionModel extends ChangeNotifier {
   List<Session> _items;
 
-  SessionsModel() {
+  SessionModel() {
     _items = [
       Session(DateTime.now(), DateTime.now().add(Duration(hours: 1))),
       Session(DateTime.now(), DateTime.now().add(Duration(hours: 1))),
