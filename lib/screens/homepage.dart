@@ -14,23 +14,10 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import 'package:flutter/material.dart';
-import 'package:productivity_tracker/models/sessions.dart';
-import 'package:productivity_tracker/screens/overview.dart';
-import 'package:productivity_tracker/themes.dart';
+import 'package:moor/moor.dart' hide Column;
+import 'package:productivity_tracker/utils/database.dart';
 import 'package:productivity_tracker/widgets/timer.dart';
 import 'package:provider/provider.dart';
-
-class App extends StatelessWidget {
-  // This widget is the root of your application.
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter Demo',
-      theme: lightTheme,
-      home: HomePage(title: 'Productivity Tracker'),
-    );
-  }
-}
 
 class HomePage extends StatefulWidget {
   HomePage({Key key, this.title}) : super(key: key);
@@ -42,14 +29,37 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  var sessionModel = SessionModel();
+  Project _selectedProject;
 
   void _onTimerStopped(DateTime start, DateTime end) {
-    sessionModel.addSession(Session(start: start, end: end));
+    final sessionDao = Provider.of<SessionDao>(context, listen: false);
+    final session = SessionsCompanion(
+      start: Value(start),
+      end: Value(end),
+      project: Value(_selectedProject?.id),
+    );
+    sessionDao.insertSession(session);
   }
 
-  void _deleteCallback(Session session) {
-    sessionModel.removeSession(session);
+  StreamBuilder<List<Session>> _buildSessionsList(BuildContext context) {
+    final sessionDao = Provider.of<SessionDao>(context);
+    return StreamBuilder<List<Session>>(
+      stream: sessionDao.watchAllSessions(),
+      builder: (context, snapshot) {
+        final sessions = snapshot.data ?? List();
+        return ListView.builder(
+          scrollDirection: Axis.vertical,
+          shrinkWrap: true,
+          itemCount: sessions.length,
+          itemBuilder: (context, index) => ListTile(
+            title: Text(
+              sessions[index].toString(),
+            ),
+            onTap: () => sessionDao.deleteSession(sessions[index]),
+          ),
+        );
+      },
+    );
   }
 
   @override
@@ -66,10 +76,7 @@ class _HomePageState extends State<HomePage> {
               onTimerStopped: _onTimerStopped,
             ),
             Expanded(
-              child: ChangeNotifierProvider.value(
-                value: sessionModel,
-                child: Overview(_deleteCallback),
-              ),
+              child: _buildSessionsList(context),
             ),
           ],
         ),

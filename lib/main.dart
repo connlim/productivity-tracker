@@ -14,10 +14,28 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import 'package:flutter/material.dart';
-import 'package:productivity_tracker/screens/app.dart';
+import 'package:productivity_tracker/screens/homepage.dart';
+import 'package:productivity_tracker/themes.dart';
+import 'package:productivity_tracker/utils/database.dart';
+import 'package:provider/provider.dart';
 
-void main() {
-  runApp(
-    App(),
-  );
+final db = Database();
+void main() => runApp(App());
+
+class App extends StatelessWidget {
+  // This widget is the root of your application.
+  @override
+  Widget build(BuildContext context) {
+    return MultiProvider(
+      providers: [
+        Provider(create: (_) => db.projectDao),
+        Provider(create: (_) => db.sessionDao),
+      ],
+      child: MaterialApp(
+        title: 'Productivity Tracker',
+        theme: lightTheme,
+        home: HomePage(title: 'Productivity Tracker'),
+      ),
+    );
+  }
 }
