@@ -45,7 +45,11 @@ class _HomePageState extends State<HomePage> {
   var sessionModel = SessionModel();
 
   void _onTimerStopped(DateTime start, DateTime end) {
-    sessionModel.addSession(Session(start, end));
+    sessionModel.addSession(Session(start: start, end: end));
+  }
+
+  void _deleteCallback(Session session) {
+    sessionModel.removeSession(session);
   }
 
   @override
@@ -64,7 +68,7 @@ class _HomePageState extends State<HomePage> {
             Expanded(
               child: ChangeNotifierProvider.value(
                 value: sessionModel,
-                child: Overview(),
+                child: Overview(_deleteCallback),
               ),
             ),
           ],

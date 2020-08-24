@@ -18,6 +18,10 @@ import 'package:productivity_tracker/models/sessions.dart';
 import 'package:provider/provider.dart';
 
 class Overview extends StatefulWidget {
+  Function(Session) deleteCallback;
+
+  Overview(this.deleteCallback);
+
   @override
   _OverviewState createState() => _OverviewState();
 }
@@ -26,7 +30,9 @@ class _OverviewState extends State<Overview> {
   @override
   Widget build(BuildContext context) {
     SessionModel model = context.watch<SessionModel>();
-    Iterable<Session> sessions = model.sessions.reversed;
+    Iterable<Session> sessions = model.sessions?.reversed;
+
+    if (sessions == null) return Container();
 
     return ListView.builder(
       scrollDirection: Axis.vertical,
@@ -36,6 +42,7 @@ class _OverviewState extends State<Overview> {
         title: Text(
           sessions.elementAt(index).toString(),
         ),
+        onTap: () => widget.deleteCallback(sessions.elementAt(index)),
       ),
     );
   }
