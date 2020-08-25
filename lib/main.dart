@@ -14,10 +14,11 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import 'package:flutter/material.dart';
-import 'package:productivity_tracker/screens/homepage.dart';
-import 'package:productivity_tracker/themes.dart';
-import 'package:productivity_tracker/utils/database.dart';
 import 'package:provider/provider.dart';
+
+import 'package:productivity_tracker/screens/homepage.dart';
+import 'package:productivity_tracker/theme/styles.dart';
+import 'package:productivity_tracker/utils/database.dart';
 
 final db = Database();
 void main() => runApp(App());

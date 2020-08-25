@@ -89,6 +89,8 @@ class ProjectDao extends DatabaseAccessor<Database> with _$ProjectDaoMixin {
   ProjectDao(this.db) : super(db);
 
   Future<List<Project>> getAllProjects() => select(projects).get();
+  Stream<List<Project>> watchAllProjects() => select(projects).watch();
+
   Future insertProject(Insertable<Project> proj) => into(projects).insert(proj);
   Future updateProject(Insertable<Project> proj) =>
       update(projects).replace(proj);

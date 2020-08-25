@@ -16,6 +16,8 @@
 import 'package:flutter/material.dart';
 import 'package:moor/moor.dart' hide Column;
 import 'package:productivity_tracker/utils/database.dart';
+import 'package:productivity_tracker/widgets/project_creator.dart';
+import 'package:productivity_tracker/widgets/project_selector.dart';
 import 'package:productivity_tracker/widgets/timer.dart';
 import 'package:provider/provider.dart';
 
@@ -43,7 +45,7 @@ class _HomePageState extends State<HomePage> {
 
   StreamBuilder<List<Session>> _buildSessionsList(BuildContext context) {
     final sessionDao = Provider.of<SessionDao>(context);
-    return StreamBuilder<List<Session>>(
+    return StreamBuilder(
       stream: sessionDao.watchAllSessions(),
       builder: (context, snapshot) {
         final sessions = snapshot.data ?? List();
@@ -75,6 +77,8 @@ class _HomePageState extends State<HomePage> {
             TimerWidget(
               onTimerStopped: _onTimerStopped,
             ),
+            ProjectSelector(),
+            ProjectCreator(),
             Expanded(
               child: _buildSessionsList(context),
             ),
