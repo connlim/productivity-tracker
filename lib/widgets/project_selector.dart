@@ -14,7 +14,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import 'package:flutter/material.dart';
-import 'package:productivity_tracker/utils/database.dart';
+import 'package:productivity_tracker/db/database.dart';
 import 'package:provider/provider.dart';
 
 class ProjectSelector extends StatefulWidget {

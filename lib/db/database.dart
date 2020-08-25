@@ -18,8 +18,6 @@ import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart' as p;
 import 'dart:io';
 
-// assuming that your file is called filename.dart. This will give an error at first,
-// but it's needed for moor to know about the generated code
 part 'database.g.dart';
 
 class Sessions extends Table {
@@ -77,9 +75,23 @@ class SessionDao extends DatabaseAccessor<Database> with _$SessionDaoMixin {
         .watch();
   }
 
-  Future insertSession(Insertable<Session> s) => into(sessions).insert(s);
+  Future<int> insertSession(Insertable<Session> s) => into(sessions).insert(s);
   Future updateSession(Insertable<Session> s) => update(sessions).replace(s);
   Future deleteSession(Insertable<Session> s) => delete(sessions).delete(s);
+
+  Future<Session> createAndInsertSession(DateTime start, DateTime end,
+      [Project project]) {
+    return insertSession(
+      SessionsCompanion(
+        start: Value(start),
+        end: Value(end),
+      ),
+    ).then(
+      (id) {
+        return Session(id: id, start: start, end: end);
+      },
+    );
+  }
 }
 
 @UseDao(tables: [Projects])
@@ -91,7 +103,8 @@ class ProjectDao extends DatabaseAccessor<Database> with _$ProjectDaoMixin {
   Future<List<Project>> getAllProjects() => select(projects).get();
   Stream<List<Project>> watchAllProjects() => select(projects).watch();
 
-  Future insertProject(Insertable<Project> proj) => into(projects).insert(proj);
+  Future<int> insertProject(Insertable<Project> proj) =>
+      into(projects).insert(proj);
   Future updateProject(Insertable<Project> proj) =>
       update(projects).replace(proj);
   Future deleteProject(Insertable<Project> proj) =>

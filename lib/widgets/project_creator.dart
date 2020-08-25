@@ -15,7 +15,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:moor/moor.dart';
-import 'package:productivity_tracker/utils/database.dart';
+import 'package:productivity_tracker/db/database.dart';
 import 'package:provider/provider.dart';
 
 class ProjectCreator extends StatefulWidget {

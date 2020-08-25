@@ -17,29 +17,31 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:productivity_tracker/blocs/sessions/sessions_bloc.dart';
 
-import 'package:productivity_tracker/screens/homepage.dart';
-import 'package:productivity_tracker/theme/styles.dart';
-import 'package:productivity_tracker/db/database.dart';
-
-final db = Database();
-void main() => runApp(App());
-
-class App extends StatelessWidget {
+class SessionsOverview extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return MultiBlocProvider(
-      providers: [
-        BlocProvider(
-          create: (context) => SessionsBloc(
-            sessionDao: db.sessionDao,
-          )..add(SessionsLoaded()),
-        ),
-      ],
-      child: MaterialApp(
-        title: 'Productivity Tracker',
-        theme: lightTheme,
-        home: HomePage(title: 'Productivity Tracker'),
-      ),
+    return BlocBuilder<SessionsBloc, SessionsState>(
+      builder: (context, state) {
+        if (state is SessionsLoadInProgress) {
+          return Container(child: Text('Loading...'));
+        } else if (state is SessionsLoadSuccess) {
+          final sessions = state.sessions;
+          return ListView.builder(
+            scrollDirection: Axis.vertical,
+            shrinkWrap: true,
+            itemCount: sessions.length,
+            itemBuilder: (context, index) => ListTile(
+              title: Text(
+                sessions[index].toString(),
+              ),
+              onTap: () => BlocProvider.of<SessionsBloc>(context)
+                  .add(SessionDeleted(session: sessions[index])),
+            ),
+          );
+        } else {
+          return Container(child: Text('Failed'));
+        }
+      },
     );
   }
 }
