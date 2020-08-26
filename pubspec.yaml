@@ -30,6 +30,7 @@ dependencies:
   sprintf: ^4.1.0
   flutter_bloc: ^6.0.1
   equatable: ^1.2.4
+  intl: ^0.16.1
 
 dev_dependencies:
   flutter_test:

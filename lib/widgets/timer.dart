@@ -45,8 +45,6 @@ class Timer extends StatelessWidget {
             },
           ),
           BlocBuilder<TimerBloc, TimerState>(
-            buildWhen: (prevState, state) =>
-                state.runtimeType != prevState.runtimeType,
             builder: (context, state) => _TimerControl(),
           ),
         ],
@@ -63,7 +61,6 @@ class _TimerControl extends StatelessWidget {
 
   Widget _mapStateToControlButton(TimerBloc timerBloc) {
     final TimerState state = timerBloc.state;
-
     if (state is TimerInitial) {
       return RaisedButton(
         child: Row(
@@ -92,7 +89,9 @@ class _TimerControl extends StatelessWidget {
           ],
         ),
         color: Colors.red,
-        onPressed: () => timerBloc.add(TimerStopped(duration: state.duration)),
+        onPressed: () {
+          timerBloc.add(TimerStopped(duration: state.duration));
+        },
       );
     } else {
       return Container();

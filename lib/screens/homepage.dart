@@ -15,40 +15,66 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:productivity_tracker/blocs/sessions/sessions_bloc.dart';
 import 'package:productivity_tracker/db/database.dart';
-import 'package:productivity_tracker/widgets/project_creator.dart';
-import 'package:productivity_tracker/widgets/project_selector.dart';
-import 'package:productivity_tracker/widgets/sessions_overview.dart';
+import 'package:productivity_tracker/router.dart';
+import 'package:productivity_tracker/screens/edit_session_screen.dart';
 import 'package:productivity_tracker/widgets/timer.dart';
-import 'package:provider/provider.dart';
 
-class HomePage extends StatefulWidget {
-  HomePage({Key key, this.title}) : super(key: key);
-
+class HomePage extends StatelessWidget {
   final String title;
 
-  @override
-  _HomePageState createState() => _HomePageState();
-}
+  HomePage({@required this.title});
 
-class _HomePageState extends State<HomePage> {
-  // Project _selectedProject;
-
-  // void _onTimerStopped(DateTime start, DateTime end) {
-  //   final sessionDao = Provider.of<SessionDao>(context, listen: false);
-  //   final session = SessionsCompanion(
-  //     start: Value(start),
-  //     end: Value(end),
-  //     project: Value(_selectedProject?.id),
-  //   );
-  //   sessionDao.insertSession(session);
-  // }
+  Widget _buildSessionsOverview() {
+    return BlocBuilder<SessionsBloc, SessionsState>(
+      builder: (context, state) {
+        if (state is SessionsLoadInProgress) {
+          return Container(child: Text('Loading...'));
+        } else if (state is SessionsLoadSuccess) {
+          final sessions = state.sessions;
+          return ListView.builder(
+            scrollDirection: Axis.vertical,
+            shrinkWrap: true,
+            itemCount: sessions.length,
+            itemBuilder: (context, index) => ListTile(
+              title: Text(
+                sessions[index].toString(),
+              ),
+              onTap: () => Navigator.pushNamed(
+                context,
+                Router.editSessionRoute,
+                arguments: EditSessionRouteArguments(
+                  session: sessions[index],
+                  callback: (start, end) {
+                    final updatedSession = Session(
+                      id: sessions[index].id,
+                      start: start,
+                      end: end,
+                    );
+                    BlocProvider.of<SessionsBloc>(context).add(
+                      SessionUpdated(
+                        session: updatedSession,
+                      ),
+                    );
+                  },
+                ),
+              ),
+            ),
+          );
+        } else {
+          return Container(child: Text('Failed'));
+        }
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.title),
+        title: Text(title),
       ),
       body: Center(
         child: Column(
@@ -58,7 +84,7 @@ class _HomePageState extends State<HomePage> {
             // ProjectSelector(),
             // ProjectCreator(),
             Expanded(
-              child: SessionsOverview(),
+              child: _buildSessionsOverview(),
             ),
           ],
         ),

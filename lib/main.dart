@@ -16,7 +16,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:productivity_tracker/blocs/sessions/sessions_bloc.dart';
-
+import 'package:productivity_tracker/router.dart';
 import 'package:productivity_tracker/screens/homepage.dart';
 import 'package:productivity_tracker/theme/styles.dart';
 import 'package:productivity_tracker/db/database.dart';
@@ -38,6 +38,8 @@ class App extends StatelessWidget {
       child: MaterialApp(
         title: 'Productivity Tracker',
         theme: lightTheme,
+        onGenerateRoute: Router.generateRoute,
+        initialRoute: Router.homeRoute,
         home: HomePage(title: 'Productivity Tracker'),
       ),
     );

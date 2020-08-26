@@ -19,6 +19,10 @@ final ThemeData lightTheme = _buildLightTheme();
 
 TextTheme _buildTextTheme(TextTheme base) {
   return base.copyWith(
+    headline3: base.headline3.copyWith(
+      fontFamily: 'GoogleSans',
+      fontSize: 60.0,
+    ),
     headline6: base.headline6.copyWith(
       fontFamily: 'GoogleSans',
     ),
