@@ -24,15 +24,21 @@ import 'package:sprintf/sprintf.dart';
 
 typedef OnSaveCallback = Function(
     {@required DateTime start, @required DateTime end});
+typedef OnDeleteCallback = Function();
 
 class EditSessionScreen extends StatefulWidget {
   static const String _title = "Edit Session";
 
-  final OnSaveCallback callback;
+  final OnSaveCallback onSaveCallback;
+  final OnDeleteCallback onDeleteCallback;
   final Session session;
 
-  EditSessionScreen({Key key, @required this.session, @required this.callback})
-      : super(key: key);
+  EditSessionScreen({
+    Key key,
+    @required this.session,
+    @required this.onSaveCallback,
+    @required this.onDeleteCallback,
+  }) : super(key: key);
 
   @override
   _EditSessionScreenState createState() => _EditSessionScreenState();
@@ -165,6 +171,15 @@ class _EditSessionScreenState extends State<EditSessionScreen> {
         return Scaffold(
           appBar: AppBar(
             title: Text(EditSessionScreen._title),
+            actions: [
+              IconButton(
+                icon: Icon(Icons.delete),
+                onPressed: () {
+                  widget.onDeleteCallback();
+                  Navigator.pop(context);
+                },
+              ),
+            ],
           ),
           floatingActionButtonLocation:
               FloatingActionButtonLocation.centerFloat,
@@ -172,7 +187,7 @@ class _EditSessionScreenState extends State<EditSessionScreen> {
             icon: Icon(Icons.save),
             label: Text('SAVE'),
             onPressed: () {
-              widget.callback(
+              widget.onSaveCallback(
                 start: _start,
                 end: _end,
               );

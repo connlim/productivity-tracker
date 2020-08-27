@@ -46,7 +46,6 @@ ThemeData _buildLightTheme() {
     indicatorColor: Colors.white,
     toggleableActiveColor: const Color(0xFF1E88E5),
     splashColor: Colors.white24,
-    splashFactory: InkRipple.splashFactory,
     accentColor: secondaryColor,
     canvasColor: Colors.white,
     scaffoldBackgroundColor: Colors.white,
@@ -56,6 +55,7 @@ ThemeData _buildLightTheme() {
       colorScheme: colorScheme,
       textTheme: ButtonTextTheme.primary,
     ),
+    iconTheme: IconThemeData(color: Colors.white),
   );
   return base.copyWith(
     textTheme: _buildTextTheme(base.textTheme),

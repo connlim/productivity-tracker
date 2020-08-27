@@ -26,9 +26,11 @@ class HomeRouteArguments {
 
 class EditSessionRouteArguments {
   final Session session;
-  final OnSaveCallback callback;
+  final OnSaveCallback onSave;
+  final OnDeleteCallback onDelete;
 
-  EditSessionRouteArguments({@required this.session, @required this.callback});
+  EditSessionRouteArguments(
+      {@required this.session, @required this.onSave, @required this.onDelete});
 }
 
 class Router {
@@ -68,7 +70,8 @@ class Router {
             settings.arguments as EditSessionRouteArguments;
         return _createRoute(EditSessionScreen(
           session: args.session,
-          callback: args.callback,
+          onSaveCallback: args.onSave,
+          onDeleteCallback: args.onDelete,
         ));
       default:
         return MaterialPageRoute(

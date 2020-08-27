@@ -38,30 +38,37 @@ class HomePage extends StatelessWidget {
             scrollDirection: Axis.vertical,
             shrinkWrap: true,
             itemCount: sessions.length,
-            itemBuilder: (context, index) => ListTile(
-              title: Text(
-                sessions[index].toString(),
-              ),
-              onTap: () => Navigator.pushNamed(
-                context,
-                Router.editSessionRoute,
-                arguments: EditSessionRouteArguments(
-                  session: sessions[index],
-                  callback: ({DateTime start, DateTime end}) {
-                    final updatedSession = Session(
-                      id: sessions[index].id,
-                      start: start,
-                      end: end,
-                    );
-                    BlocProvider.of<SessionsBloc>(context).add(
-                      SessionUpdated(
-                        session: updatedSession,
-                      ),
-                    );
-                  },
+            itemBuilder: (context, index) {
+              Session session = sessions[index];
+              return ListTile(
+                title: Text(
+                  session.toString(),
                 ),
-              ),
-            ),
+                onTap: () => Navigator.pushNamed(
+                  context,
+                  Router.editSessionRoute,
+                  arguments: EditSessionRouteArguments(
+                      session: session,
+                      onSave: ({DateTime start, DateTime end}) {
+                        final updatedSession = Session(
+                          id: session.id,
+                          start: start,
+                          end: end,
+                        );
+                        BlocProvider.of<SessionsBloc>(context).add(
+                          SessionUpdated(
+                            session: updatedSession,
+                          ),
+                        );
+                      },
+                      onDelete: () {
+                        BlocProvider.of<SessionsBloc>(context).add(
+                          SessionDeleted(session: session),
+                        );
+                      }),
+                ),
+              );
+            },
           );
         } else {
           return Container(child: Text('Failed'));
