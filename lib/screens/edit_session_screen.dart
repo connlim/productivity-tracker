@@ -16,6 +16,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:intl/date_time_patterns.dart';
 import 'package:intl/intl.dart';
 import 'package:productivity_tracker/blocs/sessions/sessions_bloc.dart';
 import 'package:productivity_tracker/db/database.dart';
@@ -73,7 +74,20 @@ class _EditSessionScreenState extends State<EditSessionScreen> {
               initialDate: date,
               firstDate: DateTime.fromMicrosecondsSinceEpoch(0),
               lastDate: DateTime.parse("3000-01-01"),
-            ),
+            ).then((newDateTime) {
+              if (newDateTime != null) {
+                onNewDateTime(
+                  DateTime(
+                    newDateTime.year,
+                    newDateTime.month,
+                    newDateTime.day,
+                    date.hour,
+                    date.minute,
+                    date.second,
+                  ),
+                );
+              }
+            }),
             child: Ink(
               child: Container(
                 padding: EdgeInsets.all(10),
