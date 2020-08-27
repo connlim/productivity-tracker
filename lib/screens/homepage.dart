@@ -47,7 +47,7 @@ class HomePage extends StatelessWidget {
                 Router.editSessionRoute,
                 arguments: EditSessionRouteArguments(
                   session: sessions[index],
-                  callback: (start, end) {
+                  callback: ({DateTime start, DateTime end}) {
                     final updatedSession = Session(
                       id: sessions[index].id,
                       start: start,

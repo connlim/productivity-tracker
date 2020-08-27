@@ -13,6 +13,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
@@ -20,7 +21,8 @@ import 'package:productivity_tracker/blocs/sessions/sessions_bloc.dart';
 import 'package:productivity_tracker/db/database.dart';
 import 'package:sprintf/sprintf.dart';
 
-typedef OnSaveCallback = Function(DateTime start, DateTime end);
+typedef OnSaveCallback = Function(
+    {@required DateTime start, @required DateTime end});
 
 class EditSessionScreen extends StatefulWidget {
   static const String _title = "Edit Session";
@@ -53,24 +55,63 @@ class _EditSessionScreenState extends State<EditSessionScreen> {
     );
   }
 
-  Widget _dateItem(BuildContext context, String title, DateTime date) {
+  Widget _dateTimeItem(
+      String title, DateTime date, Function(DateTime) onNewDateTime) {
     return Padding(
       padding: const EdgeInsets.only(top: 20, bottom: 20),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Expanded(
-            flex: 2,
-            child: Text(
-              title,
-              style: Theme.of(context).textTheme.headline5,
+          Text(
+            title,
+            style: Theme.of(context).textTheme.headline5,
+          ),
+          InkWell(
+            onTap: () => showDatePicker(
+              context: context,
+              initialDate: date,
+              firstDate: DateTime.fromMicrosecondsSinceEpoch(0),
+              lastDate: DateTime.parse("3000-01-01"),
+            ),
+            child: Ink(
+              child: Container(
+                padding: EdgeInsets.all(10),
+                child: Text(
+                  DateFormat.MMMd().format(date),
+                  style: Theme.of(context).textTheme.headline5,
+                ),
+              ),
             ),
           ),
-          Expanded(
-            flex: 3,
-            child: Text(
-              DateFormat.MMMd().add_jms().format(date),
-              style: Theme.of(context).textTheme.headline5,
+          InkWell(
+            onTap: () => showTimePicker(
+              context: context,
+              helpText: 'Select new time',
+              confirmText: 'SAVE',
+              initialTime: TimeOfDay.fromDateTime(date),
+            ).then((timeOfDay) {
+              if (timeOfDay != null) {
+                onNewDateTime(
+                  DateTime(
+                    date.year,
+                    date.month,
+                    date.day,
+                    timeOfDay.hour,
+                    timeOfDay.minute,
+                    date.second,
+                  ),
+                );
+              }
+            }),
+            child: Ink(
+              child: Container(
+                padding: EdgeInsets.all(10),
+                child: Text(
+                  DateFormat.jms().format(date),
+                  style: Theme.of(context).textTheme.headline5,
+                ),
+              ),
             ),
           ),
         ],
@@ -78,14 +119,26 @@ class _EditSessionScreenState extends State<EditSessionScreen> {
     );
   }
 
-  Widget _buildDateField(BuildContext context, DateTime start, DateTime end) {
+  Widget _buildDateField() {
     return Padding(
       padding: const EdgeInsets.all(30.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          _dateItem(context, 'Start', start),
-          _dateItem(context, 'End', end),
+          _dateTimeItem(
+            'Start',
+            _start,
+            (newDateTime) => setState(() {
+              _start = newDateTime;
+            }),
+          ),
+          _dateTimeItem(
+            'End',
+            _end,
+            (newDateTime) => setState(() {
+              _end = newDateTime;
+            }),
+          ),
         ],
       ),
     );
@@ -99,6 +152,19 @@ class _EditSessionScreenState extends State<EditSessionScreen> {
           appBar: AppBar(
             title: Text(EditSessionScreen._title),
           ),
+          floatingActionButtonLocation:
+              FloatingActionButtonLocation.centerFloat,
+          floatingActionButton: FloatingActionButton.extended(
+            icon: Icon(Icons.save),
+            label: Text('SAVE'),
+            onPressed: () {
+              widget.callback(
+                start: _start,
+                end: _end,
+              );
+              Navigator.pop(context);
+            },
+          ),
           body: widget.session == null
               ? Container()
               : Container(
@@ -109,7 +175,7 @@ class _EditSessionScreenState extends State<EditSessionScreen> {
                         _formatDuration(_end.difference(_start)),
                         style: Theme.of(context).textTheme.headline3,
                       ),
-                      _buildDateField(context, _start, _end),
+                      _buildDateField(),
                     ],
                   ),
                 ),
