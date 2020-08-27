@@ -16,15 +16,19 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:intl/date_time_patterns.dart';
 import 'package:intl/intl.dart';
+import 'package:productivity_tracker/blocs/projects/projects_bloc.dart';
 import 'package:productivity_tracker/blocs/sessions/sessions_bloc.dart';
 import 'package:productivity_tracker/db/database.dart';
+import 'package:productivity_tracker/widgets/project_selector.dart';
 import 'package:sprintf/sprintf.dart';
 
-typedef OnSaveCallback = Function(
-    {@required DateTime start, @required DateTime end});
-typedef OnDeleteCallback = Function();
+typedef OnSaveCallback = void Function(
+  DateTime start,
+  DateTime end,
+  Project project,
+);
+typedef OnDeleteCallback = void Function();
 
 class EditSessionScreen extends StatefulWidget {
   static const String _title = "Edit Session";
@@ -46,6 +50,7 @@ class EditSessionScreen extends StatefulWidget {
 
 class _EditSessionScreenState extends State<EditSessionScreen> {
   DateTime _start, _end;
+  Project _selectedProject;
 
   @override
   void initState() {
@@ -53,6 +58,10 @@ class _EditSessionScreenState extends State<EditSessionScreen> {
 
     _start = widget.session?.start;
     _end = widget.session?.end;
+
+    var projectsBlocState = BlocProvider.of<ProjectsBloc>(context).state;
+    if (projectsBlocState is ProjectsLoadSuccess)
+      _selectedProject = projectsBlocState.getProject(widget.session.id);
   }
 
   String _formatDuration(Duration duration) {
@@ -62,8 +71,96 @@ class _EditSessionScreenState extends State<EditSessionScreen> {
     );
   }
 
-  Widget _dateTimeItem(
-      String title, DateTime date, Function(DateTime) onNewDateTime) {
+  Widget _buildContent() {
+    return Container(
+      alignment: Alignment.topCenter,
+      child: Column(
+        children: [
+          Text(
+            _formatDuration(_end.difference(_start)),
+            style: Theme.of(context).textTheme.headline3,
+          ),
+          Padding(
+            padding: const EdgeInsets.all(30.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                _DateTimeItem(
+                  title: 'Start',
+                  date: _start,
+                  onNewDateTime: (newDateTime) => setState(() {
+                    _start = newDateTime;
+                  }),
+                ),
+                _DateTimeItem(
+                  title: 'End',
+                  date: _end,
+                  onNewDateTime: (newDateTime) => setState(() {
+                    _end = newDateTime;
+                  }),
+                ),
+                ProjectSelector(
+                  initialSelection: _selectedProject,
+                  onSelectionChange: (newProject) {
+                    _selectedProject = newProject;
+                  },
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocBuilder<SessionsBloc, SessionsState>(
+      builder: (context, state) {
+        return Scaffold(
+          appBar: AppBar(
+            title: Text(EditSessionScreen._title),
+            actions: [
+              IconButton(
+                icon: Icon(Icons.delete),
+                onPressed: () {
+                  widget.onDeleteCallback();
+                  Navigator.pop(context);
+                },
+              ),
+            ],
+          ),
+          body: widget.session == null ? Container() : _buildContent(),
+          floatingActionButtonLocation:
+              FloatingActionButtonLocation.centerFloat,
+          floatingActionButton: FloatingActionButton.extended(
+            icon: Icon(Icons.save),
+            label: Text('SAVE'),
+            onPressed: () {
+              widget.onSaveCallback(_start, _end, _selectedProject);
+              Navigator.pop(context);
+            },
+          ),
+        );
+      },
+    );
+  }
+}
+
+class _DateTimeItem extends StatelessWidget {
+  const _DateTimeItem({
+    Key key,
+    @required this.title,
+    @required this.date,
+    @required this.onNewDateTime,
+  }) : super(key: key);
+
+  final String title;
+  final DateTime date;
+  final void Function(DateTime p1) onNewDateTime;
+
+  @override
+  Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.only(top: 20, bottom: 20),
       child: Row(
@@ -94,13 +191,11 @@ class _EditSessionScreenState extends State<EditSessionScreen> {
                 );
               }
             }),
-            child: Ink(
-              child: Container(
-                padding: EdgeInsets.all(10),
-                child: Text(
-                  DateFormat.MMMd().format(date),
-                  style: Theme.of(context).textTheme.headline5,
-                ),
+            child: Container(
+              padding: EdgeInsets.all(10),
+              child: Text(
+                DateFormat.MMMd().format(date),
+                style: Theme.of(context).textTheme.headline5,
               ),
             ),
           ),
@@ -124,92 +219,16 @@ class _EditSessionScreenState extends State<EditSessionScreen> {
                 );
               }
             }),
-            child: Ink(
-              child: Container(
-                padding: EdgeInsets.all(10),
-                child: Text(
-                  DateFormat.jms().format(date),
-                  style: Theme.of(context).textTheme.headline5,
-                ),
+            child: Container(
+              padding: EdgeInsets.all(10),
+              child: Text(
+                DateFormat.jms().format(date),
+                style: Theme.of(context).textTheme.headline5,
               ),
             ),
           ),
         ],
       ),
-    );
-  }
-
-  Widget _buildDateField() {
-    return Padding(
-      padding: const EdgeInsets.all(30.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          _dateTimeItem(
-            'Start',
-            _start,
-            (newDateTime) => setState(() {
-              _start = newDateTime;
-            }),
-          ),
-          _dateTimeItem(
-            'End',
-            _end,
-            (newDateTime) => setState(() {
-              _end = newDateTime;
-            }),
-          ),
-        ],
-      ),
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return BlocBuilder<SessionsBloc, SessionsState>(
-      builder: (context, state) {
-        return Scaffold(
-          appBar: AppBar(
-            title: Text(EditSessionScreen._title),
-            actions: [
-              IconButton(
-                icon: Icon(Icons.delete),
-                onPressed: () {
-                  widget.onDeleteCallback();
-                  Navigator.pop(context);
-                },
-              ),
-            ],
-          ),
-          floatingActionButtonLocation:
-              FloatingActionButtonLocation.centerFloat,
-          floatingActionButton: FloatingActionButton.extended(
-            icon: Icon(Icons.save),
-            label: Text('SAVE'),
-            onPressed: () {
-              widget.onSaveCallback(
-                start: _start,
-                end: _end,
-              );
-              Navigator.pop(context);
-            },
-          ),
-          body: widget.session == null
-              ? Container()
-              : Container(
-                  alignment: Alignment.topCenter,
-                  child: Column(
-                    children: [
-                      Text(
-                        _formatDuration(_end.difference(_start)),
-                        style: Theme.of(context).textTheme.headline3,
-                      ),
-                      _buildDateField(),
-                    ],
-                  ),
-                ),
-        );
-      },
     );
   }
 }

@@ -14,40 +14,53 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:productivity_tracker/blocs/projects/projects_bloc.dart';
 import 'package:productivity_tracker/db/database.dart';
-import 'package:provider/provider.dart';
 
 class ProjectSelector extends StatefulWidget {
+  final void Function(Project newProject) onSelectionChange;
+  final Project initialSelection;
+
+  ProjectSelector(
+      {@required this.onSelectionChange, Key key, this.initialSelection})
+      : super(key: key);
+
   @override
-  _ProjectSelectorState createState() => _ProjectSelectorState();
+  _ProjectSelectorState createState() =>
+      _ProjectSelectorState(initialSelection);
 }
 
 class _ProjectSelectorState extends State<ProjectSelector> {
   Project _selectedProject;
-  StreamBuilder<List<Project>> _buildDropDown(BuildContext context) {
-    final projectDao = Provider.of<ProjectDao>(context);
-    return StreamBuilder(
-      stream: projectDao.watchAllProjects(),
-      builder: (context, snapshot) {
-        final projects = snapshot.data ?? List();
 
-        return DropdownButton<Project>(
-          value: _selectedProject,
-          hint: Text('Select Project'),
-          icon: Icon(Icons.arrow_drop_down_circle),
-          isExpanded: true,
-          onChanged: (newProject) => setState(() {
-            _selectedProject = newProject;
-          }),
-          items: projects
-              .map(
-                (project) => DropdownMenuItem(
-                  value: project,
-                  child: Text(project.name),
-                ),
-              )
-              .toList(),
-        );
+  _ProjectSelectorState(this._selectedProject);
+
+  Widget _buildDropDown() {
+    return BlocBuilder<ProjectsBloc, ProjectsState>(
+      builder: (context, state) {
+        if (state is ProjectsLoadSuccess) {
+          return DropdownButton<Project>(
+            value: _selectedProject,
+            hint: Text('Select Project'),
+            icon: Icon(Icons.arrow_drop_down_circle),
+            isExpanded: true,
+            onChanged: (newProject) => setState(() {
+              _selectedProject = newProject;
+              widget.onSelectionChange(newProject);
+            }),
+            items: state.projects
+                .map(
+                  (project) => DropdownMenuItem(
+                    value: project,
+                    child: Text(project.name),
+                  ),
+                )
+                .toList(),
+          );
+        } else {
+          return Container();
+        }
       },
     );
   }
@@ -60,7 +73,7 @@ class _ProjectSelectorState extends State<ProjectSelector> {
           widthFactor: 0.8,
           child: Container(
             padding: EdgeInsets.fromLTRB(20, 10, 20, 10),
-            child: _buildDropDown(context),
+            child: _buildDropDown(),
           ),
         ),
       ],

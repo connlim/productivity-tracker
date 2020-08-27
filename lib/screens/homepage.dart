@@ -15,11 +15,9 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:productivity_tracker/blocs/sessions/sessions_bloc.dart';
 import 'package:productivity_tracker/db/database.dart';
 import 'package:productivity_tracker/router.dart';
-import 'package:productivity_tracker/screens/edit_session_screen.dart';
 import 'package:productivity_tracker/widgets/timer.dart';
 
 class HomePage extends StatelessWidget {
@@ -39,7 +37,7 @@ class HomePage extends StatelessWidget {
             shrinkWrap: true,
             itemCount: sessions.length,
             itemBuilder: (context, index) {
-              Session session = sessions[index];
+              final Session session = sessions[index];
               return ListTile(
                 title: Text(
                   session.toString(),
@@ -49,11 +47,12 @@ class HomePage extends StatelessWidget {
                   Router.editSessionRoute,
                   arguments: EditSessionRouteArguments(
                       session: session,
-                      onSave: ({DateTime start, DateTime end}) {
+                      onSave: (start, end, project) {
                         final updatedSession = Session(
                           id: session.id,
                           start: start,
                           end: end,
+                          project: project?.id,
                         );
                         BlocProvider.of<SessionsBloc>(context).add(
                           SessionUpdated(

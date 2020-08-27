@@ -15,6 +15,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:productivity_tracker/blocs/projects/projects_bloc.dart';
 import 'package:productivity_tracker/blocs/sessions/sessions_bloc.dart';
 import 'package:productivity_tracker/router.dart';
 import 'package:productivity_tracker/screens/homepage.dart';
@@ -33,6 +34,11 @@ class App extends StatelessWidget {
           create: (context) => SessionsBloc(
             sessionDao: db.sessionDao,
           )..add(SessionsLoaded()),
+        ),
+        BlocProvider(
+          create: (context) => ProjectsBloc(
+            projectDao: db.projectDao,
+          )..add(ProjectsLoaded()),
         ),
       ],
       child: MaterialApp(

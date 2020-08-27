@@ -31,6 +31,7 @@ dependencies:
   flutter_bloc: ^6.0.1
   equatable: ^1.2.4
   intl: ^0.16.1
+  sweetsheet: ^0.2.0
 
 dev_dependencies:
   flutter_test:

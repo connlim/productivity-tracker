@@ -43,7 +43,9 @@ LazyDatabase _openConnection() {
 
 @UseMoor(tables: [Sessions, Projects], daos: [SessionDao, ProjectDao])
 class Database extends _$Database {
-  Database() : super(_openConnection());
+  Database() : super(_openConnection()) {
+    this.customStatement('PRAGMA foreign_keys = ON');
+  }
 
   @override
   int get schemaVersion => 1;
@@ -109,4 +111,16 @@ class ProjectDao extends DatabaseAccessor<Database> with _$ProjectDaoMixin {
       update(projects).replace(proj);
   Future deleteProject(Insertable<Project> proj) =>
       delete(projects).delete(proj);
+
+  Future<Project> createAndInsertProject(String name) {
+    return insertProject(
+      ProjectsCompanion(
+        name: Value(name),
+      ),
+    ).then(
+      (id) {
+        return Project(id: id, name: name);
+      },
+    );
+  }
 }
