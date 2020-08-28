@@ -24,6 +24,15 @@ abstract class ProjectsEvent extends Equatable {
 
 class ProjectsLoaded extends ProjectsEvent {}
 
+class ProjectCreated extends ProjectsEvent {
+  final String name;
+
+  const ProjectCreated(this.name);
+
+  @override
+  List<Object> get props => [name];
+}
+
 class ProjectAdded extends ProjectsEvent {
   final Project project;
 

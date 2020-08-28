@@ -33,6 +33,8 @@ class ProjectsBloc extends Bloc<ProjectsEvent, ProjectsState> {
   Stream<ProjectsState> mapEventToState(ProjectsEvent event) async* {
     if (event is ProjectsLoaded) {
       yield* _mapProjectsLoadedToState();
+    } else if (event is ProjectCreated) {
+      yield* _mapProjectCreatedToState(event);
     } else if (event is ProjectAdded) {
       yield* _mapProjectAddedToState(event);
     } else if (event is ProjectUpdated) {
@@ -51,12 +53,20 @@ class ProjectsBloc extends Bloc<ProjectsEvent, ProjectsState> {
     }
   }
 
-  Stream<ProjectsState> _mapProjectAddedToState(ProjectAdded event) async* {
+  Stream<ProjectsState> _mapProjectCreatedToState(ProjectCreated event) async* {
     if (state is ProjectsLoadSuccess) {
-      final project =
-          await projectDao.createAndInsertProject(event.project.name);
+      final project = await projectDao.createAndInsertProject(event.name);
       final List<Project> updatedProjects =
           [project] + (state as ProjectsLoadSuccess).projects;
+      yield ProjectsLoadSuccess(updatedProjects);
+    }
+  }
+
+  Stream<ProjectsState> _mapProjectAddedToState(ProjectAdded event) async* {
+    if (state is ProjectsLoadSuccess) {
+      projectDao.insertProject(event.project);
+      final List<Project> updatedProjects =
+          [event.project] + (state as ProjectsLoadSuccess).projects;
       yield ProjectsLoadSuccess(updatedProjects);
     }
   }

@@ -52,7 +52,7 @@ class HomePage extends StatelessWidget {
                           id: session.id,
                           start: start,
                           end: end,
-                          project: project?.id,
+                          projectId: project?.id,
                         );
                         BlocProvider.of<SessionsBloc>(context).add(
                           SessionUpdated(

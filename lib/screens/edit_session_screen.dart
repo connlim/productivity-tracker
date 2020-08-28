@@ -20,7 +20,8 @@ import 'package:intl/intl.dart';
 import 'package:productivity_tracker/blocs/projects/projects_bloc.dart';
 import 'package:productivity_tracker/blocs/sessions/sessions_bloc.dart';
 import 'package:productivity_tracker/db/database.dart';
-import 'package:productivity_tracker/widgets/project_selector.dart';
+import 'package:productivity_tracker/theme/styles.dart';
+import 'package:productivity_tracker/widgets/select_project_modal.dart';
 import 'package:sprintf/sprintf.dart';
 
 typedef OnSaveCallback = void Function(
@@ -61,7 +62,7 @@ class _EditSessionScreenState extends State<EditSessionScreen> {
 
     var projectsBlocState = BlocProvider.of<ProjectsBloc>(context).state;
     if (projectsBlocState is ProjectsLoadSuccess)
-      _selectedProject = projectsBlocState.getProject(widget.session.id);
+      _selectedProject = projectsBlocState.getProject(widget.session.projectId);
   }
 
   String _formatDuration(Duration duration) {
@@ -99,10 +100,22 @@ class _EditSessionScreenState extends State<EditSessionScreen> {
                     _end = newDateTime;
                   }),
                 ),
-                ProjectSelector(
-                  initialSelection: _selectedProject,
-                  onSelectionChange: (newProject) {
-                    _selectedProject = newProject;
+                Text(_selectedProject?.name ?? "No Project Selected"),
+                FlatButton(
+                  child: Text('Choose Project'),
+                  onPressed: () {
+                    showModalBottomSheet<Project>(
+                      context: context,
+                      shape: bottomSheetShape,
+                      isScrollControlled: true,
+                      builder: (context) => SelectProjectModal(),
+                    ).then((project) {
+                      if (project != null) {
+                        setState(() {
+                          _selectedProject = project;
+                        });
+                      }
+                    });
                   },
                 ),
               ],

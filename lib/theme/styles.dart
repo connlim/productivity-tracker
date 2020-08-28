@@ -15,6 +15,10 @@
 
 import 'package:flutter/material.dart';
 
+final bottomSheetShape = RoundedRectangleBorder(
+  borderRadius: BorderRadius.circular(10.0),
+);
+
 final ThemeData lightTheme = _buildLightTheme();
 
 TextTheme _buildTextTheme(TextTheme base) {

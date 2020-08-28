@@ -30,12 +30,15 @@ class ProjectsLoadSuccess extends ProjectsState {
   const ProjectsLoadSuccess([this.projects = const []]);
 
   Project getProject(int id) {
-    if (projects.length == 0) return null;
-    return projects.firstWhere((project) => project.id == id, orElse: null);
+    if (id == null || projects.length == 0) return null;
+    return projects.firstWhere(
+      (project) => project.id == id,
+      orElse: () => null,
+    );
   }
 
   @override
-  List<Object> get props => [Projects];
+  List<Object> get props => [projects];
 }
 
 class ProjectsLoadFailure extends ProjectsState {}
