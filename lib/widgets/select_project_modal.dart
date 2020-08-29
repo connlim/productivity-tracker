@@ -18,58 +18,97 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:productivity_tracker/blocs/projects/projects_bloc.dart';
 import 'package:productivity_tracker/db/database.dart';
 import 'package:productivity_tracker/theme/styles.dart';
+import 'package:productivity_tracker/widgets/bottomsheet_title.dart';
+import 'package:productivity_tracker/widgets/create_project_modal.dart';
 
 class SelectProjectModal extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return ConstrainedBox(
-      constraints: BoxConstraints(
-        minHeight: 350.0,
-        maxHeight: 750.0,
+    return NotificationListener<OverscrollIndicatorNotification>(
+      onNotification: (OverscrollIndicatorNotification overscroll) {
+        // Disable the glowing effect when user overscrolls modal
+        overscroll.disallowGlow();
+        return true;
+      },
+      child: DraggableScrollableSheet(
+        initialChildSize: 0.4,
+        expand: false,
+        builder: (context, scrollController) => LayoutBuilder(
+          builder: (context, constraint) => SingleChildScrollView(
+            physics: ClampingScrollPhysics(),
+            controller: scrollController,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                BottomSheetTitle(
+                  title: 'Select Project',
+                  showHandle: true,
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(top: 15.0, bottom: 10.0),
+                  child: _CreateProjectButton(),
+                ),
+                _ProjectsListView(scrollController: scrollController),
+              ],
+            ),
+          ),
+        ),
       ),
+    );
+  }
+}
+
+class _CreateProjectButton extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return OutlineButton(
+      child: Text('Create New Project'),
+      onPressed: () => showModalBottomSheet<String>(
+        context: context,
+        shape: bottomSheetShape,
+        isScrollControlled: true,
+        builder: (context) => CreateProjectModal(),
+      ).then(
+        (String name) {
+          if (name != null) {
+            BlocProvider.of<ProjectsBloc>(context).add(ProjectCreated(name));
+          }
+        },
+      ),
+    );
+  }
+}
+
+class _ProjectsListView extends StatelessWidget {
+  final ScrollController scrollController;
+
+  _ProjectsListView({this.scrollController});
+
+  @override
+  Widget build(BuildContext context) {
+    return Flexible(
+      fit: FlexFit.loose,
       child: BlocBuilder<ProjectsBloc, ProjectsState>(
         builder: (context, state) {
           if (state is ProjectsLoadInProgress) {
             return Container(child: Text('Loading...'));
           } else if (state is ProjectsLoadSuccess) {
             final projects = state.projects;
-            return Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.only(top: 15.0, bottom: 10.0),
-                  child: OutlineButton(
-                    child: Text('Create New Project'),
-                    onPressed: () => showModalBottomSheet<String>(
-                      context: context,
-                      shape: bottomSheetShape,
-                      isScrollControlled: true,
-                      builder: (context) => CreateProjectModal(),
-                    ).then((String name) {
-                      if (name != null) {
-                        BlocProvider.of<ProjectsBloc>(context)
-                            .add(ProjectCreated(name));
-                      }
-                    }),
+            return ListView.builder(
+              physics: const NeverScrollableScrollPhysics(),
+              controller: scrollController,
+              shrinkWrap: true,
+              itemCount: projects.length,
+              itemBuilder: (context, index) {
+                return _ProjectListItem(
+                  project: projects[index],
+                  onTap: () => Navigator.pop<Project>(
+                    context,
+                    projects[index],
                   ),
-                ),
-                ListView.builder(
-                  scrollDirection: Axis.vertical,
-                  shrinkWrap: true,
-                  physics: ClampingScrollPhysics(),
-                  itemCount: projects.length,
-                  itemBuilder: (context, index) {
-                    return ProjectListItem(
-                      project: projects[index],
-                      onTap: () => Navigator.pop<Project>(
-                        context,
-                        projects[index],
-                      ),
-                    );
-                  },
-                ),
-              ],
+                );
+              },
             );
           } else {
             return Container(child: Text('Error Loading Projects'));
@@ -80,11 +119,11 @@ class SelectProjectModal extends StatelessWidget {
   }
 }
 
-class ProjectListItem extends StatelessWidget {
+class _ProjectListItem extends StatelessWidget {
   final void Function() onTap;
   final Project project;
 
-  ProjectListItem({Key key, @required this.project, @required this.onTap})
+  _ProjectListItem({Key key, @required this.project, @required this.onTap})
       : super(key: key);
 
   @override
@@ -98,68 +137,6 @@ class ProjectListItem extends StatelessWidget {
           style: Theme.of(context).textTheme.subtitle1,
           softWrap: true,
         ),
-      ),
-    );
-  }
-}
-
-class CreateProjectModal extends StatefulWidget {
-  @override
-  _CreateProjectModalState createState() => _CreateProjectModalState();
-}
-
-class _CreateProjectModalState extends State<CreateProjectModal> {
-  TextEditingController _controller;
-
-  @override
-  void initState() {
-    super.initState();
-
-    _controller = TextEditingController();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.fromLTRB(
-        10.0,
-        20.0,
-        10.0,
-        MediaQuery.of(context).viewInsets.bottom + 10.0,
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Text(
-            'Create New Project',
-            style: Theme.of(context).textTheme.headline6,
-          ),
-          Padding(
-            padding: const EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
-            child: TextField(
-              controller: _controller,
-              decoration: InputDecoration(
-                labelText: 'Project name',
-              ),
-            ),
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              FlatButton(
-                child: Text('Cancel'),
-                onPressed: () => Navigator.pop(context),
-              ),
-              FlatButton(
-                child: Text('Save'),
-                onPressed: () {
-                  Navigator.pop<String>(context, _controller.text);
-                },
-              ),
-            ],
-          )
-        ],
       ),
     );
   }
