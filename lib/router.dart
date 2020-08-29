@@ -15,13 +15,13 @@
 
 import 'package:flutter/material.dart';
 import 'package:productivity_tracker/db/database.dart';
-import 'package:productivity_tracker/screens/homepage.dart';
 import 'package:productivity_tracker/screens/edit_session_screen.dart';
+import 'package:productivity_tracker/screens/overview_screen.dart';
 
-class HomeRouteArguments {
+class OverviewRouteArguments {
   final String title;
 
-  HomeRouteArguments({@required this.title});
+  OverviewRouteArguments({@required this.title});
 }
 
 class EditSessionRouteArguments {
@@ -34,7 +34,7 @@ class EditSessionRouteArguments {
 }
 
 class Router {
-  static const String homeRoute = '/';
+  static const String overviewRoute = '/overview';
   static const String editSessionRoute = '/session';
 
   static Route _createRoute(Widget widget) {
@@ -60,11 +60,15 @@ class Router {
     );
   }
 
-  static Route<dynamic> generateRoute(RouteSettings settings) {
+  static Route<dynamic> generateRoute(
+      RouteSettings settings, Widget defaultPage) {
     switch (settings.name) {
-      case homeRoute:
-        HomeRouteArguments args = settings.arguments as HomeRouteArguments;
-        return _createRoute(HomePage(title: args.title));
+      case '/':
+        return _createRoute(defaultPage);
+      case overviewRoute:
+        OverviewRouteArguments args =
+            settings.arguments as OverviewRouteArguments;
+        return _createRoute(OverviewScreen(title: args?.title ?? "Test"));
       case editSessionRoute:
         EditSessionRouteArguments args =
             settings.arguments as EditSessionRouteArguments;

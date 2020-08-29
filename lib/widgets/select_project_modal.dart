@@ -68,6 +68,7 @@ class _CreateProjectButton extends StatelessWidget {
         context: context,
         shape: bottomSheetShape,
         isScrollControlled: true,
+        useRootNavigator: true,
         builder: (context) => CreateProjectModal(),
       ).then(
         (String name) {

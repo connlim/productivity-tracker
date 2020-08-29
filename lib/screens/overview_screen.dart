@@ -20,10 +20,10 @@ import 'package:productivity_tracker/db/database.dart';
 import 'package:productivity_tracker/router.dart';
 import 'package:productivity_tracker/widgets/timer.dart';
 
-class HomePage extends StatelessWidget {
+class OverviewScreen extends StatelessWidget {
   final String title;
 
-  HomePage({@required this.title});
+  OverviewScreen({@required this.title});
 
   Widget _buildSessionsOverview() {
     return BlocBuilder<SessionsBloc, SessionsState>(

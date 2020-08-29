@@ -108,6 +108,7 @@ class _EditSessionScreenState extends State<EditSessionScreen> {
                       context: context,
                       shape: bottomSheetShape,
                       isScrollControlled: true,
+                      useRootNavigator: true,
                       builder: (context) => SelectProjectModal(),
                     ).then((project) {
                       if (project != null) {
