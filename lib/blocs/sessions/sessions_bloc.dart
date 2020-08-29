@@ -20,6 +20,7 @@ import 'package:equatable/equatable.dart';
 import 'package:flutter/foundation.dart';
 
 import 'package:productivity_tracker/db/database.dart';
+import 'package:productivity_tracker/db/tables/sessions.dart';
 
 part 'sessions_event.dart';
 part 'sessions_state.dart';
