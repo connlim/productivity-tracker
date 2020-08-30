@@ -15,6 +15,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:productivity_tracker/screens/overview_screen.dart';
+import 'package:productivity_tracker/screens/projects_list_screen.dart';
 import 'package:productivity_tracker/tab_item.dart';
 
 class App extends StatefulWidget {
@@ -34,7 +35,7 @@ class AppState extends State<App> {
     TabItem(
       title: "Projects",
       icon: Icons.list,
-      defaultPage: Container(),
+      defaultPage: ProjectsListScreen(),
     ),
   ];
 

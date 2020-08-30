@@ -17,6 +17,8 @@ import 'package:flutter/material.dart';
 import 'package:productivity_tracker/db/database.dart';
 import 'package:productivity_tracker/screens/edit_session_screen.dart';
 import 'package:productivity_tracker/screens/overview_screen.dart';
+import 'package:productivity_tracker/screens/project_overview_screen.dart';
+import 'package:productivity_tracker/screens/projects_list_screen.dart';
 
 class OverviewRouteArguments {
   final String title;
@@ -36,6 +38,8 @@ class EditSessionRouteArguments {
 class Router {
   static const String overviewRoute = '/overview';
   static const String editSessionRoute = '/session';
+  static const String projectsListRoute = '/projects';
+  static const String projectOverviewRoute = '/project_overview';
 
   static Route _createRoute(Widget widget) {
     return PageRouteBuilder(
@@ -77,6 +81,11 @@ class Router {
           onSaveCallback: args.onSave,
           onDeleteCallback: args.onDelete,
         ));
+      case projectsListRoute:
+        return _createRoute(ProjectsListScreen());
+      case projectOverviewRoute:
+        Project project = settings.arguments as Project;
+        return _createRoute(ProjectOverviewScreen(project: project));
       default:
         return MaterialPageRoute(
           builder: (_) => Container(
