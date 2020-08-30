@@ -17,6 +17,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:productivity_tracker/blocs/filtered_sessions/filtered_sessions_cubit.dart';
 import 'package:productivity_tracker/blocs/sessions/sessions_bloc.dart';
 import 'package:productivity_tracker/db/database.dart';
+import 'package:productivity_tracker/widgets/sessions_list_item.dart';
 
 class ProjectOverviewScreen extends StatelessWidget {
   final Project project;
@@ -53,8 +54,9 @@ class _SessionsListView extends StatelessWidget {
           final sessions = state.filteredSessions;
           return ListView.builder(
             itemCount: sessions.length,
-            itemBuilder: (context, index) => _SessionListItem(
+            itemBuilder: (context, index) => SessionsListItem(
               session: sessions[index],
+              showProjectName: false,
               onTap: () {},
             ),
           );
@@ -62,29 +64,6 @@ class _SessionsListView extends StatelessWidget {
           return Container(child: Text('Failed to load projects'));
         }
       },
-    );
-  }
-}
-
-class _SessionListItem extends StatelessWidget {
-  final void Function() onTap;
-  final Session session;
-
-  _SessionListItem({Key key, @required this.session, @required this.onTap})
-      : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return InkWell(
-      onTap: onTap,
-      child: Container(
-        padding: EdgeInsets.fromLTRB(30.0, 15.0, 30.0, 15.0),
-        child: Text(
-          session.toString(),
-          style: Theme.of(context).textTheme.subtitle1,
-          softWrap: true,
-        ),
-      ),
     );
   }
 }

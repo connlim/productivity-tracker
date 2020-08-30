@@ -49,7 +49,7 @@ ThemeData _buildLightTheme() {
     buttonColor: primaryColor,
     indicatorColor: Colors.white,
     toggleableActiveColor: const Color(0xFF1E88E5),
-    splashColor: Colors.white24,
+    // splashColor: Colors.white24,
     accentColor: secondaryColor,
     canvasColor: Colors.white,
     scaffoldBackgroundColor: Colors.white,

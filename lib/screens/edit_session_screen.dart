@@ -21,6 +21,7 @@ import 'package:productivity_tracker/blocs/projects/projects_bloc.dart';
 import 'package:productivity_tracker/blocs/sessions/sessions_bloc.dart';
 import 'package:productivity_tracker/db/database.dart';
 import 'package:productivity_tracker/theme/styles.dart';
+import 'package:productivity_tracker/utils/date_utils.dart';
 import 'package:productivity_tracker/widgets/select_project_modal.dart';
 import 'package:sprintf/sprintf.dart';
 
@@ -65,20 +66,13 @@ class _EditSessionScreenState extends State<EditSessionScreen> {
       _selectedProject = projectsBlocState.getProject(widget.session.projectId);
   }
 
-  String _formatDuration(Duration duration) {
-    return sprintf(
-      "%02d:%02d:%02d",
-      [duration.inHours, duration.inMinutes % 60, duration.inSeconds % 60],
-    );
-  }
-
   Widget _buildContent() {
     return Container(
       alignment: Alignment.topCenter,
       child: Column(
         children: [
           Text(
-            _formatDuration(_end.difference(_start)),
+            formatTimerDuration(_end.difference(_start)),
             style: Theme.of(context).textTheme.headline3,
           ),
           Padding(
@@ -186,6 +180,7 @@ class _DateTimeItem extends StatelessWidget {
             style: Theme.of(context).textTheme.headline5,
           ),
           InkWell(
+            splashFactory: InkRipple.splashFactory,
             onTap: () => showDatePicker(
               context: context,
               initialDate: date,
@@ -214,6 +209,7 @@ class _DateTimeItem extends StatelessWidget {
             ),
           ),
           InkWell(
+            splashFactory: InkRipple.splashFactory,
             onTap: () => showTimePicker(
               context: context,
               helpText: 'Select new time',

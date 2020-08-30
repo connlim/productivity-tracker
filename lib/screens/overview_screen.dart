@@ -18,6 +18,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:productivity_tracker/blocs/sessions/sessions_bloc.dart';
 import 'package:productivity_tracker/db/database.dart';
 import 'package:productivity_tracker/router.dart';
+import 'package:productivity_tracker/widgets/sessions_list_item.dart';
 import 'package:productivity_tracker/widgets/timer.dart';
 
 class OverviewScreen extends StatelessWidget {
@@ -38,10 +39,8 @@ class OverviewScreen extends StatelessWidget {
             itemCount: sessions.length,
             itemBuilder: (context, index) {
               final Session session = sessions[index];
-              return ListTile(
-                title: Text(
-                  session.toString(),
-                ),
+              return SessionsListItem(
+                session: session,
                 onTap: () => Navigator.pushNamed(
                   context,
                   Router.editSessionRoute,
