@@ -19,6 +19,7 @@ import 'package:productivity_tracker/db/database.dart';
 import 'package:productivity_tracker/router.dart';
 import 'package:productivity_tracker/theme/styles.dart';
 import 'package:productivity_tracker/widgets/create_project_modal.dart';
+import 'package:productivity_tracker/widgets/themed_fab.dart';
 
 class ProjectsListScreen extends StatelessWidget {
   @override
@@ -30,10 +31,10 @@ class ProjectsListScreen extends StatelessWidget {
       body: SafeArea(
         child: _ProjectsListView(),
       ),
-      floatingActionButton: FloatingActionButton.extended(
-        label: Text('Create New Project'.toUpperCase()),
-        icon: Icon(Icons.add),
-        onPressed: () {
+      floatingActionButton: ThemedFAB(
+        title: 'Create New Project',
+        iconData: Icons.add,
+        onTap: () {
           return showModalBottomSheet<String>(
             context: context,
             shape: bottomSheetShape,

@@ -20,6 +20,7 @@ import 'package:productivity_tracker/blocs/timer/timer_bloc.dart';
 import 'package:productivity_tracker/db/database.dart';
 import 'package:productivity_tracker/router.dart';
 import 'package:productivity_tracker/widgets/sessions_list_item.dart';
+import 'package:productivity_tracker/widgets/themed_fab.dart';
 import 'package:productivity_tracker/widgets/timer.dart';
 
 class OverviewScreen extends StatefulWidget {
@@ -151,18 +152,11 @@ class _BuildTimerControlFAB extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return FloatingActionButton.extended(
-      heroTag: null,
-      label: Text(
-        isStarted ? 'Stop Timer' : 'Start Timer',
-        style: TextStyle(color: Colors.white),
-      ),
-      icon: Icon(
-        isStarted ? Icons.stop : Icons.play_arrow,
-        color: Colors.white,
-      ),
+    return ThemedFAB(
+      title: isStarted ? 'Stop Timer' : 'Start Timer',
+      iconData: isStarted ? Icons.stop : Icons.play_arrow,
       backgroundColor: isStarted ? Colors.red : Colors.green,
-      onPressed: onTap,
+      onTap: onTap,
     );
   }
 }

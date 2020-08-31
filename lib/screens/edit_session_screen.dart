@@ -23,6 +23,7 @@ import 'package:productivity_tracker/db/database.dart';
 import 'package:productivity_tracker/theme/styles.dart';
 import 'package:productivity_tracker/utils/date_utils.dart';
 import 'package:productivity_tracker/widgets/select_project_modal.dart';
+import 'package:productivity_tracker/widgets/themed_fab.dart';
 
 typedef OnSaveCallback = void Function(
   DateTime start,
@@ -140,10 +141,10 @@ class _EditSessionScreenState extends State<EditSessionScreen> {
           body: widget.session == null ? Container() : _buildContent(),
           floatingActionButtonLocation:
               FloatingActionButtonLocation.centerFloat,
-          floatingActionButton: FloatingActionButton.extended(
-            icon: Icon(Icons.save),
-            label: Text('SAVE'),
-            onPressed: () {
+          floatingActionButton: ThemedFAB(
+            iconData: Icons.save,
+            title: 'Save',
+            onTap: () {
               widget.onSaveCallback(_start, _end, _selectedProject);
               Navigator.pop(context);
             },
