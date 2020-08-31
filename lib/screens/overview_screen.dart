@@ -81,7 +81,7 @@ class _SessionsListView extends StatelessWidget {
                 session: session,
                 onTap: () => Navigator.of(
                   context,
-                  // rootNavigator: true,
+                  rootNavigator: true,
                 ).pushNamed(
                   Router.editSessionRoute,
                   arguments: EditSessionRouteArguments(
