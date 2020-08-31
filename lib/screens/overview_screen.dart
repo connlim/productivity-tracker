@@ -16,17 +16,54 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:productivity_tracker/blocs/sessions/sessions_bloc.dart';
+import 'package:productivity_tracker/blocs/timer/timer_bloc.dart';
 import 'package:productivity_tracker/db/database.dart';
 import 'package:productivity_tracker/router.dart';
 import 'package:productivity_tracker/widgets/sessions_list_item.dart';
 import 'package:productivity_tracker/widgets/timer.dart';
 
-class OverviewScreen extends StatelessWidget {
-  final String title;
+class OverviewScreen extends StatefulWidget {
+  @override
+  _OverviewScreenState createState() => _OverviewScreenState();
+}
 
-  OverviewScreen({@required this.title});
+class _OverviewScreenState extends State<OverviewScreen> {
+  Timer timer;
 
-  Widget _buildSessionsOverview() {
+  @override
+  void initState() {
+    super.initState();
+    timer = Timer();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Overview'),
+      ),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: <Widget>[
+            timer,
+            // ProjectSelector(),
+            // ProjectCreator(),
+            Expanded(
+              child: _SessionsListView(),
+            ),
+          ],
+        ),
+      ),
+      floatingActionButton: _TimerControlFAB(),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+    );
+  }
+}
+
+class _SessionsListView extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
     return BlocBuilder<SessionsBloc, SessionsState>(
       builder: (context, state) {
         if (state is SessionsLoadInProgress) {
@@ -41,8 +78,10 @@ class OverviewScreen extends StatelessWidget {
               final Session session = sessions[index];
               return SessionsListItem(
                 session: session,
-                onTap: () => Navigator.pushNamed(
+                onTap: () => Navigator.of(
                   context,
+                  // rootNavigator: true,
+                ).pushNamed(
                   Router.editSessionRoute,
                   arguments: EditSessionRouteArguments(
                       session: session,
@@ -74,26 +113,56 @@ class OverviewScreen extends StatelessWidget {
       },
     );
   }
+}
+
+class _TimerControlFAB extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return BlocBuilder<TimerBloc, TimerState>(
+      builder: (context, state) {
+        final TimerState state = BlocProvider.of<TimerBloc>(context).state;
+        if (state is TimerInitial) {
+          return _BuildTimerControlFAB(
+            isStarted: false,
+            onTap: () =>
+                BlocProvider.of<TimerBloc>(context).add(TimerStarted()),
+          );
+        } else if (state is TimerRunInProgress) {
+          return _BuildTimerControlFAB(
+            isStarted: true,
+            onTap: () {
+              BlocProvider.of<TimerBloc>(context)
+                  .add(TimerStopped(duration: state.duration));
+            },
+          );
+        } else {
+          return Container();
+        }
+      },
+    );
+  }
+}
+
+class _BuildTimerControlFAB extends StatelessWidget {
+  final void Function() onTap;
+  final bool isStarted;
+
+  _BuildTimerControlFAB({@required this.onTap, @required this.isStarted});
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(title),
+    return FloatingActionButton.extended(
+      heroTag: null,
+      label: Text(
+        isStarted ? 'Stop Timer' : 'Start Timer',
+        style: TextStyle(color: Colors.white),
       ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: <Widget>[
-            Timer(),
-            // ProjectSelector(),
-            // ProjectCreator(),
-            Expanded(
-              child: _buildSessionsOverview(),
-            ),
-          ],
-        ),
+      icon: Icon(
+        isStarted ? Icons.stop : Icons.play_arrow,
+        color: Colors.white,
       ),
+      backgroundColor: isStarted ? Colors.red : Colors.green,
+      onPressed: onTap,
     );
   }
 }

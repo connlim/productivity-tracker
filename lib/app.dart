@@ -30,7 +30,7 @@ class AppState extends State<App> {
     TabItem(
       title: "Overview",
       icon: Icons.home,
-      defaultPage: OverviewScreen(title: 'Productivity Timer'),
+      defaultPage: OverviewScreen(),
     ),
     TabItem(
       title: "Projects",

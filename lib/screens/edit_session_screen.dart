@@ -23,7 +23,6 @@ import 'package:productivity_tracker/db/database.dart';
 import 'package:productivity_tracker/theme/styles.dart';
 import 'package:productivity_tracker/utils/date_utils.dart';
 import 'package:productivity_tracker/widgets/select_project_modal.dart';
-import 'package:sprintf/sprintf.dart';
 
 typedef OnSaveCallback = void Function(
   DateTime start,

@@ -20,12 +20,6 @@ import 'package:productivity_tracker/screens/overview_screen.dart';
 import 'package:productivity_tracker/screens/project_overview_screen.dart';
 import 'package:productivity_tracker/screens/projects_list_screen.dart';
 
-class OverviewRouteArguments {
-  final String title;
-
-  OverviewRouteArguments({@required this.title});
-}
-
 class EditSessionRouteArguments {
   final Session session;
   final OnSaveCallback onSave;
@@ -64,15 +58,15 @@ class Router {
     );
   }
 
-  static Route<dynamic> generateRoute(
-      RouteSettings settings, Widget defaultPage) {
+  static Route<dynamic> generateRoute(RouteSettings settings,
+      [Widget defaultPage]) {
     switch (settings.name) {
       case '/':
-        return _createRoute(defaultPage);
+        if (defaultPage != null) return _createRoute(defaultPage);
+        continue noDefaultRoute;
+      noDefaultRoute:
       case overviewRoute:
-        OverviewRouteArguments args =
-            settings.arguments as OverviewRouteArguments;
-        return _createRoute(OverviewScreen(title: args?.title ?? "Test"));
+        return _createRoute(OverviewScreen());
       case editSessionRoute:
         EditSessionRouteArguments args =
             settings.arguments as EditSessionRouteArguments;

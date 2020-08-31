@@ -18,6 +18,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:productivity_tracker/app.dart';
 import 'package:productivity_tracker/blocs/projects/projects_bloc.dart';
 import 'package:productivity_tracker/blocs/sessions/sessions_bloc.dart';
+import 'package:productivity_tracker/blocs/timer/timer_bloc.dart';
+import 'package:productivity_tracker/router.dart';
 import 'package:productivity_tracker/theme/styles.dart';
 import 'package:productivity_tracker/db/database.dart';
 
@@ -39,11 +41,18 @@ class MyApp extends StatelessWidget {
             projectDao: db.projectDao,
           )..add(ProjectsLoaded()),
         ),
+        BlocProvider(
+          create: (context) => TimerBloc(
+            ticker: Ticker(),
+            sessionsBloc: BlocProvider.of<SessionsBloc>(context),
+          ),
+        ),
       ],
       child: MaterialApp(
         title: 'Productivity Tracker',
         theme: lightTheme,
         home: App(),
+        onGenerateRoute: (settings) => Router.generateRoute(settings),
       ),
     );
   }

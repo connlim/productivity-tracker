@@ -17,7 +17,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:productivity_tracker/blocs/projects/projects_bloc.dart';
 import 'package:productivity_tracker/db/database.dart';
 import 'package:productivity_tracker/router.dart';
-import 'package:productivity_tracker/screens/project_overview_screen.dart';
 import 'package:productivity_tracker/theme/styles.dart';
 import 'package:productivity_tracker/widgets/create_project_modal.dart';
 

@@ -15,7 +15,6 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:productivity_tracker/blocs/sessions/sessions_bloc.dart';
 import 'package:productivity_tracker/blocs/timer/timer_bloc.dart';
 import 'package:sprintf/sprintf.dart';
 
@@ -29,72 +28,11 @@ class Timer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => TimerBloc(
-        ticker: Ticker(),
-        sessionsBloc: BlocProvider.of<SessionsBloc>(context),
-      ),
-      child: Column(
-        children: [
-          BlocBuilder<TimerBloc, TimerState>(
-            builder: (context, state) {
-              return Text(
-                _formatDuration(state.duration),
-                style: Theme.of(context).textTheme.headline1,
-              );
-            },
-          ),
-          BlocBuilder<TimerBloc, TimerState>(
-            builder: (context, state) => _TimerControl(),
-          ),
-        ],
+    return BlocBuilder<TimerBloc, TimerState>(
+      builder: (context, state) => Text(
+        _formatDuration(state.duration),
+        style: Theme.of(context).textTheme.headline1,
       ),
     );
-  }
-}
-
-class _TimerControl extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return _mapStateToControlButton(BlocProvider.of<TimerBloc>(context));
-  }
-
-  Widget _mapStateToControlButton(TimerBloc timerBloc) {
-    final TimerState state = timerBloc.state;
-    if (state is TimerInitial) {
-      return RaisedButton(
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(Icons.play_arrow),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Text('Start Timer'),
-            ),
-          ],
-        ),
-        color: Colors.green,
-        onPressed: () => timerBloc.add(TimerStarted()),
-      );
-    } else if (state is TimerRunInProgress) {
-      return RaisedButton(
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(Icons.stop),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Text('Stop Timer'),
-            ),
-          ],
-        ),
-        color: Colors.red,
-        onPressed: () {
-          timerBloc.add(TimerStopped(duration: state.duration));
-        },
-      );
-    } else {
-      return Container();
-    }
   }
 }
