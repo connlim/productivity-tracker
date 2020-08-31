@@ -13,21 +13,23 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-part of 'timer_bloc.dart';
+part of 'timer_cubit.dart';
 
 abstract class TimerState extends Equatable {
+  final DateTime start;
   final int duration;
 
-  const TimerState(this.duration);
+  const TimerState(this.start, this.duration);
 
   @override
-  List<Object> get props => [duration];
+  List<Object> get props => [start, duration];
 }
 
-class TimerInitial extends TimerState {
-  const TimerInitial() : super(0);
+class TimerRunStopped extends TimerState {
+  const TimerRunStopped() : super(null, 0);
 }
 
 class TimerRunInProgress extends TimerState {
-  const TimerRunInProgress(int duration) : super(duration);
+  const TimerRunInProgress(DateTime start, int duration)
+      : super(start, duration);
 }

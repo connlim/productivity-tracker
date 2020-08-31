@@ -24,6 +24,7 @@ import 'package:productivity_tracker/theme/styles.dart';
 import 'package:productivity_tracker/utils/date_utils.dart';
 import 'package:productivity_tracker/widgets/select_project_modal.dart';
 import 'package:productivity_tracker/widgets/themed_fab.dart';
+import 'package:productivity_tracker/widgets/timer.dart';
 
 class EditSessionScreen extends StatefulWidget {
   static const String _title = "Edit Session";
@@ -32,19 +33,24 @@ class EditSessionScreen extends StatefulWidget {
   EditSessionScreen({Key key, @required this.session}) : super(key: key);
 
   @override
-  _EditSessionScreenState createState() => _EditSessionScreenState();
+  _EditSessionScreenState createState() {
+    return _EditSessionScreenState(session.end == null);
+  }
 }
 
 class _EditSessionScreenState extends State<EditSessionScreen> {
   DateTime _start, _end;
   Project _selectedProject;
+  final bool sessionInProgress;
+
+  _EditSessionScreenState(this.sessionInProgress);
 
   @override
   void initState() {
     super.initState();
 
-    _start = widget.session?.start;
-    _end = widget.session?.end;
+    _start = widget.session.start;
+    _end = widget.session.end;
 
     var projectsBlocState = BlocProvider.of<ProjectsBloc>(context).state;
     if (projectsBlocState is ProjectsLoadSuccess)
@@ -62,7 +68,7 @@ class _EditSessionScreenState extends State<EditSessionScreen> {
     final updatedSession = Session(
       id: widget.session.id,
       start: _start,
-      end: _end,
+      end: sessionInProgress ? null : _end,
       projectId: _selectedProject?.id,
     );
     BlocProvider.of<SessionsBloc>(context).add(
@@ -78,10 +84,12 @@ class _EditSessionScreenState extends State<EditSessionScreen> {
       alignment: Alignment.topCenter,
       child: Column(
         children: [
-          Text(
-            formatTimerDuration(_end.difference(_start)),
-            style: Theme.of(context).textTheme.headline3,
-          ),
+          sessionInProgress
+              ? Container()
+              : Text(
+                  formatTimerDuration(_end.difference(_start)),
+                  style: Theme.of(context).textTheme.headline3,
+                ),
           Padding(
             padding: const EdgeInsets.all(30.0),
             child: Column(
@@ -94,13 +102,14 @@ class _EditSessionScreenState extends State<EditSessionScreen> {
                     _start = newDateTime;
                   }),
                 ),
-                _DateTimeItem(
-                  title: 'End',
-                  date: _end,
-                  onNewDateTime: (newDateTime) => setState(() {
-                    _end = newDateTime;
-                  }),
-                ),
+                if (!sessionInProgress)
+                  _DateTimeItem(
+                    title: 'End',
+                    date: _end,
+                    onNewDateTime: (newDateTime) => setState(() {
+                      _end = newDateTime;
+                    }),
+                  ),
                 Text(_selectedProject?.name ?? "No Project Selected"),
                 FlatButton(
                   child: Text('Choose Project'),
@@ -134,10 +143,11 @@ class _EditSessionScreenState extends State<EditSessionScreen> {
       appBar: AppBar(
         title: Text(EditSessionScreen._title),
         actions: [
-          IconButton(
-            icon: Icon(Icons.delete),
-            onPressed: _onDelete,
-          ),
+          if (!sessionInProgress)
+            IconButton(
+              icon: Icon(Icons.delete),
+              onPressed: _onDelete,
+            ),
         ],
       ),
       body: widget.session == null ? Container() : _buildContent(),

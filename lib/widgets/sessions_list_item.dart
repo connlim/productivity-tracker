@@ -38,8 +38,11 @@ class SessionsListItem extends StatelessWidget {
   String _formatStartEndDates(DateTime start, DateTime end) {
     final String startText =
         DateFormat.MMMd().addPattern('jm', ', ').format(session.start);
+
     String endText;
-    if (start.day != end.day ||
+    if (end == null) {
+      endText = 'Present';
+    } else if (start.day != end.day ||
         start.month != end.month ||
         start.year != end.year) {
       // Start and end date fall on different days
@@ -91,7 +94,17 @@ class SessionsListItem extends StatelessWidget {
                   Text(_formatStartEndDates(session.start, session.end)),
                 ],
               ),
-              Text(formatTimerDuration(session.end.difference(session.start))),
+              session.end != null
+                  ? Text(formatTimerDuration(
+                      session.end.difference(session.start),
+                    ))
+                  : Text(
+                      'In Progress',
+                      style: Theme.of(context).textTheme.bodyText2.copyWith(
+                            color: Colors.green,
+                            fontWeight: FontWeight.bold,
+                          ),
+                    ),
             ],
           ),
         ),

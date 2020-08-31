@@ -18,7 +18,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:productivity_tracker/app.dart';
 import 'package:productivity_tracker/blocs/projects/projects_bloc.dart';
 import 'package:productivity_tracker/blocs/sessions/sessions_bloc.dart';
-import 'package:productivity_tracker/blocs/timer/timer_bloc.dart';
+import 'package:productivity_tracker/blocs/timer/timer_cubit.dart';
 import 'package:productivity_tracker/router.dart';
 import 'package:productivity_tracker/theme/styles.dart';
 import 'package:productivity_tracker/db/database.dart';
@@ -42,7 +42,7 @@ class MyApp extends StatelessWidget {
           )..add(ProjectsLoaded()),
         ),
         BlocProvider(
-          create: (context) => TimerBloc(
+          create: (context) => TimerCubit(
             ticker: Ticker(),
             sessionsBloc: BlocProvider.of<SessionsBloc>(context),
           ),

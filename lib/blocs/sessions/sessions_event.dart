@@ -50,3 +50,21 @@ class SessionDeleted extends SessionsEvent {
   @override
   List<Object> get props => [session];
 }
+
+class SessionStarted extends SessionsEvent {
+  final DateTime start;
+
+  const SessionStarted({@required this.start});
+
+  @override
+  List<Object> get props => [start];
+}
+
+class SessionEnded extends SessionsEvent {
+  final DateTime end;
+
+  const SessionEnded({@required this.end});
+
+  @override
+  List<Object> get props => [end];
+}

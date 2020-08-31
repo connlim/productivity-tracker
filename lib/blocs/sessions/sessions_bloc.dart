@@ -40,13 +40,20 @@ class SessionsBloc extends Bloc<SessionsEvent, SessionsState> {
       yield* _mapSessionUpdatedToState(event);
     } else if (event is SessionDeleted) {
       yield* _mapSessionDeletedToState(event);
+    } else if (event is SessionStarted) {
+      yield* _mapSessionStartedToState(event);
+    } else if (event is SessionEnded) {
+      yield* _mapSessionEndedToState(event);
     }
   }
 
   Stream<SessionsState> _mapSessionsLoadedToState() async* {
     try {
       final sessions = await this.sessionDao.getAllSessions();
-      yield SessionsLoadSuccess(sessions);
+      yield SessionsLoadSuccess(
+        sessions: sessions,
+        inProgressSession: null,
+      );
     } catch (_) {
       yield SessionsLoadFailure();
     }
@@ -54,35 +61,84 @@ class SessionsBloc extends Bloc<SessionsEvent, SessionsState> {
 
   Stream<SessionsState> _mapSessionAddedToState(SessionAdded event) async* {
     if (state is SessionsLoadSuccess) {
+      final successState = (state as SessionsLoadSuccess);
       final session = await sessionDao.createAndInsertSession(
           event.session.start, event.session.end);
-      final List<Session> updatedSessions =
-          [session] + (state as SessionsLoadSuccess).sessions;
-      yield SessionsLoadSuccess(updatedSessions);
+      final List<Session> updatedSessions = [session] + successState.sessions;
+      yield SessionsLoadSuccess(
+        sessions: updatedSessions,
+        inProgressSession: successState.inProgressSession,
+      );
     }
   }
 
   Stream<SessionsState> _mapSessionUpdatedToState(SessionUpdated event) async* {
     if (state is SessionsLoadSuccess) {
-      final List<Session> updatedSessions =
-          (state as SessionsLoadSuccess).sessions.map(
-        (session) {
-          return session.id == event.session.id ? event.session : session;
-        },
-      ).toList();
-      yield SessionsLoadSuccess(updatedSessions);
+      final successState = (state as SessionsLoadSuccess);
+      List<Session> updatedSessions;
+      Session newInProgressSession;
+
+      // Check if the new session is the in progress session
+      if (event.session.id == successState.inProgressSession.id) {
+        // Only update the in progress session
+        updatedSessions = successState.sessions;
+        newInProgressSession = event.session;
+      } else {
+        // Only update the list of sessions
+        updatedSessions = successState.sessions.map(
+          (session) {
+            return session.id == event.session.id ? event.session : session;
+          },
+        ).toList();
+        newInProgressSession = successState.inProgressSession;
+      }
+
+      yield SessionsLoadSuccess(
+        sessions: updatedSessions,
+        inProgressSession: newInProgressSession,
+      );
       sessionDao.updateSession(event.session);
     }
   }
 
   Stream<SessionsState> _mapSessionDeletedToState(SessionDeleted event) async* {
     if (state is SessionsLoadSuccess) {
-      final List<Session> updatedSessions = (state as SessionsLoadSuccess)
-          .sessions
+      final successState = (state as SessionsLoadSuccess);
+      final List<Session> updatedSessions = successState.sessions
           .where((session) => session.id != event.session.id)
           .toList();
-      yield SessionsLoadSuccess(updatedSessions);
+      yield SessionsLoadSuccess(
+        sessions: updatedSessions,
+        inProgressSession: successState.inProgressSession,
+      );
       sessionDao.deleteSession(event.session);
+    }
+  }
+
+  Stream<SessionsState> _mapSessionStartedToState(SessionStarted event) async* {
+    if (state is SessionsLoadSuccess) {
+      final session = await sessionDao.createAndInsertSession(event.start);
+      yield SessionsLoadSuccess(
+        sessions: (state as SessionsLoadSuccess).sessions,
+        inProgressSession: session,
+      );
+    }
+  }
+
+  Stream<SessionsState> _mapSessionEndedToState(SessionEnded event) async* {
+    if (state is SessionsLoadSuccess) {
+      final inProgressSession =
+          (state as SessionsLoadSuccess).inProgressSession;
+      final newSession = Session(
+        id: inProgressSession.id,
+        start: inProgressSession.start,
+        end: event.end,
+      );
+      yield SessionsLoadSuccess(
+        sessions: (state as SessionsLoadSuccess).sessions + [newSession],
+        inProgressSession: null,
+      );
+      sessionDao.updateSession(newSession);
     }
   }
 }

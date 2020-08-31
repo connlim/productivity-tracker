@@ -12,11 +12,7 @@ class Session extends DataClass implements Insertable<Session> {
   final DateTime start;
   final DateTime end;
   final int projectId;
-  Session(
-      {@required this.id,
-      @required this.start,
-      @required this.end,
-      this.projectId});
+  Session({@required this.id, @required this.start, this.end, this.projectId});
   factory Session.fromData(Map<String, dynamic> data, GeneratedDatabase db,
       {String prefix}) {
     final effectivePrefix = prefix ?? '';
@@ -127,10 +123,9 @@ class SessionsCompanion extends UpdateCompanion<Session> {
   SessionsCompanion.insert({
     this.id = const Value.absent(),
     @required DateTime start,
-    @required DateTime end,
+    this.end = const Value.absent(),
     this.projectId = const Value.absent(),
-  })  : start = Value(start),
-        end = Value(end);
+  }) : start = Value(start);
   static Insertable<Session> custom({
     Expression<int> id,
     Expression<DateTime> start,
@@ -221,7 +216,7 @@ class $SessionsTable extends Sessions with TableInfo<$SessionsTable, Session> {
     return GeneratedDateTimeColumn(
       'end',
       $tableName,
-      false,
+      true,
     );
   }
 
@@ -259,8 +254,6 @@ class $SessionsTable extends Sessions with TableInfo<$SessionsTable, Session> {
     if (data.containsKey('end')) {
       context.handle(
           _endMeta, end.isAcceptableOrUnknown(data['end'], _endMeta));
-    } else if (isInserting) {
-      context.missing(_endMeta);
     }
     if (data.containsKey('project_id')) {
       context.handle(_projectIdMeta,

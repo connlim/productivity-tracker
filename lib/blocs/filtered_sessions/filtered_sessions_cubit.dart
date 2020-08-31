@@ -35,12 +35,12 @@ class FilteredSessionsCubit extends Cubit<FilteredSessionsState> {
     // Initial update of current projects filter
     final currentState = sessionsBloc.state;
     if (currentState is SessionsLoadSuccess) {
-      _updateFilteredProjects(currentState.sessions);
+      _updateFilteredProjects(currentState.allSessions);
     }
     // Subscribe for future changes
     sessionsSubscription = sessionsBloc.listen((state) {
       if (state is SessionsLoadSuccess) {
-        _updateFilteredProjects(state.sessions);
+        _updateFilteredProjects(state.allSessions);
       }
     });
   }

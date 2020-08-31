@@ -16,7 +16,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:productivity_tracker/blocs/sessions/sessions_bloc.dart';
-import 'package:productivity_tracker/blocs/timer/timer_bloc.dart';
+import 'package:productivity_tracker/blocs/timer/timer_cubit.dart';
 import 'package:productivity_tracker/db/database.dart';
 import 'package:productivity_tracker/router.dart';
 import 'package:productivity_tracker/widgets/sessions_list_item.dart';
@@ -70,10 +70,15 @@ class _SessionsListView extends StatelessWidget {
         if (state is SessionsLoadInProgress) {
           return Container(child: Text('Loading...'));
         } else if (state is SessionsLoadSuccess) {
-          final sessions = state.sessions;
-          // Sort in descending order
+          final sessions = state.allSessions;
+          // Sort end time in descending order
           sessions.sort((s1, s2) {
-            return s2.start.compareTo(s1.start);
+            if (s1.end == null) {
+              return -1;
+            } else if (s2.end == null) {
+              return 1;
+            }
+            return s2.end.compareTo(s1.end);
           });
           return ListView.builder(
             scrollDirection: Axis.vertical,
@@ -105,21 +110,19 @@ class _SessionsListView extends StatelessWidget {
 class _TimerControlFAB extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<TimerBloc, TimerState>(
+    return BlocBuilder<TimerCubit, TimerState>(
       builder: (context, state) {
-        final TimerState state = BlocProvider.of<TimerBloc>(context).state;
-        if (state is TimerInitial) {
+        final TimerState state = BlocProvider.of<TimerCubit>(context).state;
+        if (state is TimerRunStopped) {
           return _BuildTimerControlFAB(
             isStarted: false,
-            onTap: () =>
-                BlocProvider.of<TimerBloc>(context).add(TimerStarted()),
+            onTap: () => BlocProvider.of<TimerCubit>(context).startTimer(),
           );
         } else if (state is TimerRunInProgress) {
           return _BuildTimerControlFAB(
             isStarted: true,
             onTap: () {
-              BlocProvider.of<TimerBloc>(context)
-                  .add(TimerStopped(duration: state.duration));
+              BlocProvider.of<TimerCubit>(context).stopTimer();
             },
           );
         } else {

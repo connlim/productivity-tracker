@@ -20,7 +20,7 @@ part 'sessions.g.dart';
 class Sessions extends Table {
   IntColumn get id => integer().autoIncrement()();
   DateTimeColumn get start => dateTime()();
-  DateTimeColumn get end => dateTime()();
+  DateTimeColumn get end => dateTime().nullable()();
   IntColumn get projectId =>
       integer().nullable().customConstraint('NULL REFERENCES projects(id)')();
 }
@@ -55,8 +55,8 @@ class SessionDao extends DatabaseAccessor<Database> with _$SessionDaoMixin {
   Future updateSession(Insertable<Session> s) => update(sessions).replace(s);
   Future deleteSession(Insertable<Session> s) => delete(sessions).delete(s);
 
-  Future<Session> createAndInsertSession(DateTime start, DateTime end,
-      [Project project]) {
+  Future<Session> createAndInsertSession(DateTime start,
+      [DateTime end, Project project]) {
     return insertSession(
       SessionsCompanion(
         start: Value(start),

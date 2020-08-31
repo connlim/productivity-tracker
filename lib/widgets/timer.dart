@@ -15,22 +15,15 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:productivity_tracker/blocs/timer/timer_bloc.dart';
-import 'package:sprintf/sprintf.dart';
+import 'package:productivity_tracker/blocs/timer/timer_cubit.dart';
+import 'package:productivity_tracker/utils/date_utils.dart';
 
 class Timer extends StatelessWidget {
-  String _formatDuration(int duration) {
-    return sprintf(
-      "%02d:%02d:%02d",
-      [duration ~/ 360, duration ~/ 60, duration % 60],
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<TimerBloc, TimerState>(
+    return BlocBuilder<TimerCubit, TimerState>(
       builder: (context, state) => Text(
-        _formatDuration(state.duration),
+        formatTimerDuration(Duration(seconds: state.duration)),
         style: Theme.of(context).textTheme.headline1,
       ),
     );

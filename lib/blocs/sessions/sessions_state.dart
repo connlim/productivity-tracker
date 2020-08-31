@@ -26,11 +26,16 @@ class SessionsLoadInProgress extends SessionsState {}
 
 class SessionsLoadSuccess extends SessionsState {
   final List<Session> sessions;
+  final Session inProgressSession;
 
-  const SessionsLoadSuccess([this.sessions = const []]);
+  const SessionsLoadSuccess(
+      {@required this.inProgressSession, this.sessions = const []});
+
+  List<Session> get allSessions =>
+      inProgressSession != null ? sessions + [inProgressSession] : sessions;
 
   @override
-  List<Object> get props => [sessions];
+  List<Object> get props => [sessions, inProgressSession];
 }
 
 class SessionsLoadFailure extends SessionsState {}
