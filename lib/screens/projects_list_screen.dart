@@ -65,6 +65,7 @@ class _ProjectsListView extends StatelessWidget {
           return Container(child: Text('Loading...'));
         } else if (state is ProjectsLoadSuccess) {
           final projects = state.projects;
+          projects.sort((p1, p2) => p1.name.compareTo(p2.name));
           return ListView.builder(
             itemCount: projects.length,
             itemBuilder: (context, index) => _ProjectListItem(

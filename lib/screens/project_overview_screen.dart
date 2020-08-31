@@ -60,6 +60,9 @@ class _SessionsListView extends StatelessWidget {
           return Container(child: Text('Loading...'));
         } else if (state is FilteredSessionsLoadSuccess) {
           final sessions = state.filteredSessions;
+          sessions.sort((s1, s2) {
+            return s2.start.compareTo(s1.start);
+          });
           return ListView.builder(
             itemCount: sessions.length,
             itemBuilder: (context, index) => SessionsListItem(

@@ -71,6 +71,10 @@ class _SessionsListView extends StatelessWidget {
           return Container(child: Text('Loading...'));
         } else if (state is SessionsLoadSuccess) {
           final sessions = state.sessions;
+          // Sort in descending order
+          sessions.sort((s1, s2) {
+            return s2.start.compareTo(s1.start);
+          });
           return ListView.builder(
             scrollDirection: Axis.vertical,
             shrinkWrap: true,
