@@ -23,10 +23,14 @@ class SessionsListItem extends StatelessWidget {
   final void Function() onTap;
   final Session session;
   final bool showProjectName;
+  final bool showDividers;
+  final bool isFirstItem;
 
   SessionsListItem({
     Key key,
     this.showProjectName = true,
+    this.showDividers = true,
+    this.isFirstItem = false,
     @required this.session,
     @required this.onTap,
   }) : super(key: key);
@@ -47,47 +51,49 @@ class SessionsListItem extends StatelessWidget {
     return '$startText – $endText';
   }
 
-  // String _formatStartEndDates(DateTime start, DateTime end) {
-  //   final String endText = DateFormat.jm().add_MMMd().format(session.end);
-  //   String startText;
-  //   if (start.day != end.day ||
-  //       start.month != end.month ||
-  //       start.year != end.year) {
-  //     // Start and end date fall on different days
-  //     // Add month and day to the end text
-  //     startText = DateFormat.MMMd().add_jm().format(session.end);
-  //   } else {
-  //     startText = DateFormat.jm().format(session.end);
-  //   }
-  //   return '$startText – $endText';
-  // }
-
   @override
   Widget build(BuildContext context) {
-    return InkWell(
-      splashFactory: InkRipple.splashFactory,
-      onTap: () {
-        // await Future.delayed(Duration(milliseconds: 100));
-        onTap();
-      },
-      child: Container(
-        padding: EdgeInsets.fromLTRB(30.0, 20.0, 30.0, 20.0),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                if (showProjectName && session.projectId != null) ...[
-                  _BuildProjectName(session: session),
-                  const SizedBox(height: 5.0),
+    final borderSide = Divider.createBorderSide(
+      context,
+      color: Colors.grey[300],
+    );
+    final bool showingProject = showProjectName && session.projectId != null;
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        border: Border(
+          top: isFirstItem ? borderSide : BorderSide.none,
+          bottom: borderSide,
+        ),
+      ),
+      child: InkWell(
+        splashFactory: InkRipple.splashFactory,
+        onTap: () {
+          onTap();
+        },
+        child: Container(
+          padding: EdgeInsets.fromLTRB(
+            30.0,
+            showingProject ? 20.0 : 22.0,
+            30.0,
+            showingProject ? 20.0 : 22.0,
+          ),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  if (showingProject) ...[
+                    _BuildProjectName(session: session),
+                    const SizedBox(height: 5.0),
+                  ],
+                  Text(_formatStartEndDates(session.start, session.end)),
                 ],
-                Text(_formatStartEndDates(session.start, session.end)),
-              ],
-            ),
-            Text(formatTimerDuration(session.end.difference(session.start))),
-          ],
+              ),
+              Text(formatTimerDuration(session.end.difference(session.start))),
+            ],
+          ),
         ),
       ),
     );

@@ -83,6 +83,7 @@ class _SessionsListView extends StatelessWidget {
               final Session session = sessions[index];
               return SessionsListItem(
                 session: session,
+                isFirstItem: index == 0,
                 onTap: () => Navigator.of(
                   context,
                   rootNavigator: true,
