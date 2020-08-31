@@ -25,26 +25,11 @@ import 'package:productivity_tracker/utils/date_utils.dart';
 import 'package:productivity_tracker/widgets/select_project_modal.dart';
 import 'package:productivity_tracker/widgets/themed_fab.dart';
 
-typedef OnSaveCallback = void Function(
-  DateTime start,
-  DateTime end,
-  Project project,
-);
-typedef OnDeleteCallback = void Function();
-
 class EditSessionScreen extends StatefulWidget {
   static const String _title = "Edit Session";
-
-  final OnSaveCallback onSaveCallback;
-  final OnDeleteCallback onDeleteCallback;
   final Session session;
 
-  EditSessionScreen({
-    Key key,
-    @required this.session,
-    @required this.onSaveCallback,
-    @required this.onDeleteCallback,
-  }) : super(key: key);
+  EditSessionScreen({Key key, @required this.session}) : super(key: key);
 
   @override
   _EditSessionScreenState createState() => _EditSessionScreenState();
@@ -64,6 +49,28 @@ class _EditSessionScreenState extends State<EditSessionScreen> {
     var projectsBlocState = BlocProvider.of<ProjectsBloc>(context).state;
     if (projectsBlocState is ProjectsLoadSuccess)
       _selectedProject = projectsBlocState.getProject(widget.session.projectId);
+  }
+
+  void _onDelete() {
+    BlocProvider.of<SessionsBloc>(context).add(
+      SessionDeleted(session: widget.session),
+    );
+    Navigator.pop(context);
+  }
+
+  void _onSave() {
+    final updatedSession = Session(
+      id: widget.session.id,
+      start: _start,
+      end: _end,
+      projectId: _selectedProject?.id,
+    );
+    BlocProvider.of<SessionsBloc>(context).add(
+      SessionUpdated(
+        session: updatedSession,
+      ),
+    );
+    Navigator.pop(context);
   }
 
   Widget _buildContent() {
@@ -123,34 +130,23 @@ class _EditSessionScreenState extends State<EditSessionScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<SessionsBloc, SessionsState>(
-      builder: (context, state) {
-        return Scaffold(
-          appBar: AppBar(
-            title: Text(EditSessionScreen._title),
-            actions: [
-              IconButton(
-                icon: Icon(Icons.delete),
-                onPressed: () {
-                  widget.onDeleteCallback();
-                  Navigator.pop(context);
-                },
-              ),
-            ],
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(EditSessionScreen._title),
+        actions: [
+          IconButton(
+            icon: Icon(Icons.delete),
+            onPressed: _onDelete,
           ),
-          body: widget.session == null ? Container() : _buildContent(),
-          floatingActionButtonLocation:
-              FloatingActionButtonLocation.centerFloat,
-          floatingActionButton: ThemedFAB(
-            iconData: Icons.save,
-            title: 'Save',
-            onTap: () {
-              widget.onSaveCallback(_start, _end, _selectedProject);
-              Navigator.pop(context);
-            },
-          ),
-        );
-      },
+        ],
+      ),
+      body: widget.session == null ? Container() : _buildContent(),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+      floatingActionButton: ThemedFAB(
+        iconData: Icons.save,
+        title: 'Save',
+        onTap: _onSave,
+      ),
     );
   }
 }

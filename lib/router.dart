@@ -22,11 +22,7 @@ import 'package:productivity_tracker/screens/projects_list_screen.dart';
 
 class EditSessionRouteArguments {
   final Session session;
-  final OnSaveCallback onSave;
-  final OnDeleteCallback onDelete;
-
-  EditSessionRouteArguments(
-      {@required this.session, @required this.onSave, @required this.onDelete});
+  EditSessionRouteArguments({@required this.session});
 }
 
 class Router {
@@ -70,11 +66,7 @@ class Router {
       case editSessionRoute:
         EditSessionRouteArguments args =
             settings.arguments as EditSessionRouteArguments;
-        return _createRoute(EditSessionScreen(
-          session: args.session,
-          onSaveCallback: args.onSave,
-          onDeleteCallback: args.onDelete,
-        ));
+        return _createRoute(EditSessionScreen(session: args.session));
       case projectsListRoute:
         return _createRoute(ProjectsListScreen());
       case projectOverviewRoute:

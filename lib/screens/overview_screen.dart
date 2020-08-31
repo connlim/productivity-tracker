@@ -84,26 +84,7 @@ class _SessionsListView extends StatelessWidget {
                   rootNavigator: true,
                 ).pushNamed(
                   Router.editSessionRoute,
-                  arguments: EditSessionRouteArguments(
-                      session: session,
-                      onSave: (start, end, project) {
-                        final updatedSession = Session(
-                          id: session.id,
-                          start: start,
-                          end: end,
-                          projectId: project?.id,
-                        );
-                        BlocProvider.of<SessionsBloc>(context).add(
-                          SessionUpdated(
-                            session: updatedSession,
-                          ),
-                        );
-                      },
-                      onDelete: () {
-                        BlocProvider.of<SessionsBloc>(context).add(
-                          SessionDeleted(session: session),
-                        );
-                      }),
+                  arguments: EditSessionRouteArguments(session: session),
                 ),
               );
             },

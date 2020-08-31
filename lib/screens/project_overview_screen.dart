@@ -17,6 +17,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:productivity_tracker/blocs/filtered_sessions/filtered_sessions_cubit.dart';
 import 'package:productivity_tracker/blocs/sessions/sessions_bloc.dart';
 import 'package:productivity_tracker/db/database.dart';
+import 'package:productivity_tracker/router.dart';
 import 'package:productivity_tracker/widgets/sessions_list_item.dart';
 
 class ProjectOverviewScreen extends StatelessWidget {
@@ -44,6 +45,13 @@ class ProjectOverviewScreen extends StatelessWidget {
 }
 
 class _SessionsListView extends StatelessWidget {
+  void _handleEditSession(BuildContext context, Session session) {
+    Navigator.of(context, rootNavigator: true).pushNamed(
+      Router.editSessionRoute,
+      arguments: EditSessionRouteArguments(session: session),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<FilteredSessionsCubit, FilteredSessionsState>(
@@ -57,7 +65,7 @@ class _SessionsListView extends StatelessWidget {
             itemBuilder: (context, index) => SessionsListItem(
               session: sessions[index],
               showProjectName: false,
-              onTap: () {},
+              onTap: () => _handleEditSession(context, sessions[index]),
             ),
           );
         } else {
