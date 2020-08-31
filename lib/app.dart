@@ -49,27 +49,17 @@ class AppState extends State<App> {
     });
   }
 
-  void _selectTab(int index) {
-    if (index == currentTab) {
-      tabs[index].navigatorKey.currentState.popUntil((route) => route.isFirst);
-    } else {
-      setState(() => currentTab = index);
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: () async {
-        final isFirstRouteInCurrentTab =
+        final currentTabNotPopped =
             !await tabs[currentTab].navigatorKey.currentState.maybePop();
-        if (isFirstRouteInCurrentTab) {
-          if (currentTab != 0) {
-            _selectTab(0);
-            return false;
-          }
+        if (currentTabNotPopped && currentTab != 0) {
+          setState(() => currentTab = 0);
+          return false;
         }
-        return isFirstRouteInCurrentTab;
+        return currentTabNotPopped;
       },
       child: Scaffold(
         body: IndexedStack(
