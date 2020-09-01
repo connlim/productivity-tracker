@@ -117,28 +117,32 @@ class SessionsBloc extends Bloc<SessionsEvent, SessionsState> {
 
   Stream<SessionsState> _mapSessionStartedToState(SessionStarted event) async* {
     if (state is SessionsLoadSuccess) {
-      final session = await sessionDao.createAndInsertSession(event.start);
+      // final session = await sessionDao.createAndInsertSession(event.start);
       yield SessionsLoadSuccess(
         sessions: (state as SessionsLoadSuccess).sessions,
-        inProgressSession: session,
+        inProgressSession: Session(id: null, start: event.start),
       );
     }
   }
 
   Stream<SessionsState> _mapSessionEndedToState(SessionEnded event) async* {
     if (state is SessionsLoadSuccess) {
-      final inProgressSession =
-          (state as SessionsLoadSuccess).inProgressSession;
-      final newSession = Session(
-        id: inProgressSession.id,
-        start: inProgressSession.start,
-        end: event.end,
+      final successState = (state as SessionsLoadSuccess);
+      final inProgressSession = successState.inProgressSession;
+      // final newSession = Session(
+      //   id: inProgressSession.id,
+      //   start: inProgressSession.start,
+      //   end: event.end,
+      // );
+      final newSession = await sessionDao.createAndInsertSession(
+        inProgressSession.start,
+        event.end,
       );
       yield SessionsLoadSuccess(
-        sessions: (state as SessionsLoadSuccess).sessions + [newSession],
+        sessions: successState.sessions + [newSession],
         inProgressSession: null,
       );
-      sessionDao.updateSession(newSession);
+      // sessionDao.updateSession(newSession);
     }
   }
 }

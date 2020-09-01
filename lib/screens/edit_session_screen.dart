@@ -24,7 +24,6 @@ import 'package:productivity_tracker/theme/styles.dart';
 import 'package:productivity_tracker/utils/date_utils.dart';
 import 'package:productivity_tracker/widgets/select_project_modal.dart';
 import 'package:productivity_tracker/widgets/themed_fab.dart';
-import 'package:productivity_tracker/widgets/timer.dart';
 
 class EditSessionScreen extends StatefulWidget {
   static const String _title = "Edit Session";

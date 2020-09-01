@@ -34,8 +34,8 @@ class TimerCubit extends Cubit<TimerState> {
         super(TimerRunStopped()) {
     sessionsSubscription = sessionsBloc.listen((sessionState) {
       if (sessionState is SessionsLoadSuccess) {
-        final sessionStart = sessionState.inProgressSession.start;
-        if (sessionStart != state.start) {
+        final sessionStart = sessionState.inProgressSession?.start;
+        if (sessionStart != null && sessionStart != state.start) {
           emit(TimerRunInProgress(
             sessionStart,
             DateTime.now().difference(sessionStart).inSeconds,
