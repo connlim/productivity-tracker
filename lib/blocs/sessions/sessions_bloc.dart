@@ -79,7 +79,7 @@ class SessionsBloc extends Bloc<SessionsEvent, SessionsState> {
       Session newInProgressSession;
 
       // Check if the new session is the in progress session
-      if (event.session.id == successState.inProgressSession.id) {
+      if (event.session.id == successState.inProgressSession?.id) {
         // Only update the in progress session
         updatedSessions = successState.sessions;
         newInProgressSession = event.session;
