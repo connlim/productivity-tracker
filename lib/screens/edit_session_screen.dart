@@ -24,6 +24,7 @@ import 'package:productivity_tracker/theme/styles.dart';
 import 'package:productivity_tracker/utils/date_utils.dart';
 import 'package:productivity_tracker/widgets/select_project_modal.dart';
 import 'package:productivity_tracker/widgets/themed_fab.dart';
+import 'package:productivity_tracker/widgets/time_picker.dart';
 
 class EditSessionScreen extends StatefulWidget {
   static const String _title = "Edit Session";
@@ -37,6 +38,7 @@ class EditSessionScreen extends StatefulWidget {
   }
 }
 
+//TODO: Implement DateTime validation
 class _EditSessionScreenState extends State<EditSessionScreen> {
   DateTime _start, _end;
   Project _selectedProject;
@@ -317,24 +319,21 @@ class _TimeWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // TODO: Add custom time picker which includes seconds
     return _LargeFlatButton(
       text: DateFormat.jms().format(date),
-      onTap: () => showTimePicker(
+      onTap: () => showCustomTimePicker(
         context: context,
-        helpText: 'Select new time',
-        confirmText: 'SAVE',
-        initialTime: TimeOfDay.fromDateTime(date),
-      ).then((timeOfDay) {
-        if (timeOfDay != null) {
+        initialTime: date,
+      ).then((newTime) {
+        if (newTime != null) {
           onTimeChange(
             DateTime(
               date.year,
               date.month,
               date.day,
-              timeOfDay.hour,
-              timeOfDay.minute,
-              date.second,
+              newTime.hour,
+              newTime.minute,
+              newTime.second,
             ),
           );
         }
