@@ -23,9 +23,9 @@ final ThemeData lightTheme = _buildLightTheme();
 
 TextTheme _buildTextTheme(TextTheme base) {
   return base.copyWith(
-    headline3: base.headline3.copyWith(
+    headline3: base.headline2.copyWith(
       fontFamily: 'GoogleSans',
-      fontSize: 60.0,
+      fontWeight: FontWeight.normal,
     ),
     headline6: base.headline6.copyWith(
       fontFamily: 'GoogleSans',
@@ -34,33 +34,30 @@ TextTheme _buildTextTheme(TextTheme base) {
 }
 
 ThemeData _buildLightTheme() {
-  const Color primaryColor = Color(0xFF0175c2);
-  const Color secondaryColor = Color(0xFF13B9FD);
+  const Color primaryColor = Color(0xFF1178d0);
+  const Color primaryVariant = Color(0xFF004d9e);
+  const Color secondaryColor = Color(0xFF00b0ff);
+
   final ColorScheme colorScheme = const ColorScheme.light().copyWith(
     primary: primaryColor,
+    primaryVariant: primaryVariant,
     secondary: secondaryColor,
   );
+
   final ThemeData base = ThemeData(
     visualDensity: VisualDensity.adaptivePlatformDensity,
-    brightness: Brightness.light,
-    accentColorBrightness: Brightness.dark,
     colorScheme: colorScheme,
     primaryColor: primaryColor,
     buttonColor: primaryColor,
-    indicatorColor: Colors.white,
-    toggleableActiveColor: const Color(0xFF1E88E5),
-    // splashColor: Colors.white24,
     accentColor: secondaryColor,
-    canvasColor: Colors.white,
-    scaffoldBackgroundColor: Colors.white,
-    backgroundColor: Colors.white,
-    errorColor: const Color(0xFFB00020),
+    splashFactory: InkRipple.splashFactory,
     buttonTheme: ButtonThemeData(
       colorScheme: colorScheme,
       textTheme: ButtonTextTheme.primary,
     ),
     iconTheme: IconThemeData(color: Colors.white),
   );
+
   return base.copyWith(
     textTheme: _buildTextTheme(base.textTheme),
     primaryTextTheme: _buildTextTheme(base.primaryTextTheme),
