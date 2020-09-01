@@ -69,7 +69,6 @@ class SessionsListItem extends StatelessWidget {
         ),
       ),
       child: InkWell(
-        splashFactory: InkRipple.splashFactory,
         onTap: () {
           onTap();
         },

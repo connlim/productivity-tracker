@@ -95,7 +95,6 @@ class _ProjectListItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      splashFactory: InkRipple.splashFactory,
       onTap: onTap,
       child: Container(
         padding: EdgeInsets.fromLTRB(30.0, 15.0, 30.0, 15.0),
