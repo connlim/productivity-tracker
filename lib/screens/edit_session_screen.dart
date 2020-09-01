@@ -78,6 +78,35 @@ class _EditSessionScreenState extends State<EditSessionScreen> {
     Navigator.pop(context);
   }
 
+  TableRow _buildDateTimeRow({
+    @required String title,
+    @required DateTime datetime,
+    @required void Function(DateTime) onDateTimeChange,
+  }) {
+    return TableRow(
+      children: [
+        TableCell(
+          child: Text(
+            title,
+            style: Theme.of(context).textTheme.subtitle1,
+          ),
+        ),
+        TableCell(
+          child: _TimeWidget(
+            date: datetime,
+            onTimeChange: (newDateTime) => onDateTimeChange(newDateTime),
+          ),
+        ),
+        TableCell(
+          child: _DateWidget(
+            date: datetime,
+            onDateChange: (newDateTime) => onDateTimeChange(newDateTime),
+          ),
+        ),
+      ],
+    );
+  }
+
   Widget _buildContent() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
@@ -103,21 +132,30 @@ class _EditSessionScreenState extends State<EditSessionScreen> {
                 ),
               ),
               SizedBox(height: 10.0),
-              _DateTimeRow(
-                title: 'Start',
-                datetime: _start,
-                onDateTimeChange: (newDateTime) => setState(() {
-                  _start = newDateTime;
-                }),
+              Table(
+                defaultVerticalAlignment: TableCellVerticalAlignment.middle,
+                columnWidths: {
+                  0: FlexColumnWidth(1),
+                  1: FlexColumnWidth(3),
+                  2: IntrinsicColumnWidth(),
+                },
+                children: [
+                  _buildDateTimeRow(
+                      title: 'Start',
+                      datetime: _start,
+                      onDateTimeChange: (newDateTime) => setState(() {
+                            _start = newDateTime;
+                          })),
+                  if (!sessionInProgress)
+                    _buildDateTimeRow(
+                      title: 'End',
+                      datetime: _end,
+                      onDateTimeChange: (newDateTime) => setState(() {
+                        _end = newDateTime;
+                      }),
+                    )
+                ],
               ),
-              if (!sessionInProgress)
-                _DateTimeRow(
-                  title: 'End',
-                  datetime: _end,
-                  onDateTimeChange: (newDateTime) => setState(() {
-                    _end = newDateTime;
-                  }),
-                ),
             ],
           ),
         ),
@@ -133,6 +171,7 @@ class _EditSessionScreenState extends State<EditSessionScreen> {
                       fontWeight: FontWeight.bold,
                     ),
               ),
+              // Prevent button from touching select project text
               SizedBox(width: 10.0),
               Flexible(
                 fit: FlexFit.loose,
@@ -278,6 +317,7 @@ class _TimeWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // TODO: Add custom time picker which includes seconds
     return _LargeFlatButton(
       text: DateFormat.jms().format(date),
       onTap: () => showTimePicker(
