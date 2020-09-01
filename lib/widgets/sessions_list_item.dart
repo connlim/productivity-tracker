@@ -82,17 +82,26 @@ class SessionsListItem extends StatelessWidget {
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            mainAxisSize: MainAxisSize.min,
             children: [
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  if (showingProject) ...[
-                    _BuildProjectName(session: session),
-                    const SizedBox(height: 5.0),
+              Flexible(
+                fit: FlexFit.loose,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    if (showingProject) ...[
+                      Flexible(
+                        fit: FlexFit.loose,
+                        child: _BuildProjectName(session: session),
+                      ),
+                      const SizedBox(height: 5.0),
+                    ],
+                    Text(_formatStartEndDates(session.start, session.end)),
                   ],
-                  Text(_formatStartEndDates(session.start, session.end)),
-                ],
+                ),
               ),
+              SizedBox(width: 5.0),
               session.end != null
                   ? Text(formatTimerDuration(
                       session.end.difference(session.start),
