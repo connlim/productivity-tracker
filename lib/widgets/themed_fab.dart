@@ -18,7 +18,7 @@ class ThemedFAB extends StatelessWidget {
   final void Function() onTap;
   final String title;
   final IconData iconData;
-  Color backgroundColor;
+  final Color backgroundColor;
 
   ThemedFAB({
     this.backgroundColor,
