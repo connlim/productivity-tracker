@@ -79,40 +79,66 @@ class _EditSessionScreenState extends State<EditSessionScreen> {
   }
 
   Widget _buildContent() {
-    return Container(
-      alignment: Alignment.topCenter,
-      child: Column(
-        children: [
-          sessionInProgress
-              ? Container()
-              : Text(
-                  formatTimerDuration(_end.difference(_start)),
-                  style: Theme.of(context).textTheme.headline3,
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        sessionInProgress
+            ? Container()
+            : Text(
+                formatTimerDuration(_end.difference(_start)),
+                style: Theme.of(context).textTheme.headline2,
+              ),
+        Divider(height: 30.0),
+        Padding(
+          padding: const EdgeInsets.only(left: 30.0, right: 5.0),
+          child: Column(
+            children: [
+              Align(
+                alignment: Alignment.centerLeft,
+                child: Text(
+                  'Set Date and Time',
+                  style: Theme.of(context).textTheme.subtitle1.copyWith(
+                        fontWeight: FontWeight.bold,
+                      ),
                 ),
-          Padding(
-            padding: const EdgeInsets.all(30.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                _DateTimeItem(
-                  title: 'Start',
-                  date: _start,
-                  onNewDateTime: (newDateTime) => setState(() {
-                    _start = newDateTime;
+              ),
+              SizedBox(height: 10.0),
+              _DateTimeRow(
+                title: 'Start',
+                datetime: _start,
+                onDateTimeChange: (newDateTime) => setState(() {
+                  _start = newDateTime;
+                }),
+              ),
+              if (!sessionInProgress)
+                _DateTimeRow(
+                  title: 'End',
+                  datetime: _end,
+                  onDateTimeChange: (newDateTime) => setState(() {
+                    _end = newDateTime;
                   }),
                 ),
-                if (!sessionInProgress)
-                  _DateTimeItem(
-                    title: 'End',
-                    date: _end,
-                    onNewDateTime: (newDateTime) => setState(() {
-                      _end = newDateTime;
-                    }),
-                  ),
-                Text(_selectedProject?.name ?? "No Project Selected"),
-                FlatButton(
-                  child: Text('Choose Project'),
-                  onPressed: () {
+            ],
+          ),
+        ),
+        Divider(height: 30.0),
+        Padding(
+          padding: const EdgeInsets.only(left: 30.0, right: 5.0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                'Select Project',
+                style: Theme.of(context).textTheme.subtitle1.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
+              ),
+              SizedBox(width: 10.0),
+              Flexible(
+                fit: FlexFit.loose,
+                child: _LargeFlatButton(
+                  text: _selectedProject?.name ?? "No Project Selected",
+                  onTap: () {
                     showModalBottomSheet<Project>(
                       context: context,
                       shape: bottomSheetShape,
@@ -128,11 +154,12 @@ class _EditSessionScreenState extends State<EditSessionScreen> {
                     });
                   },
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
-        ],
-      ),
+        ),
+        Divider(height: 30.0),
+      ],
     );
   }
 
@@ -149,7 +176,16 @@ class _EditSessionScreenState extends State<EditSessionScreen> {
             ),
         ],
       ),
-      body: widget.session == null ? Container() : _buildContent(),
+      body: widget.session == null
+          ? Container()
+          : Container(
+              alignment: Alignment.topCenter,
+              padding: EdgeInsets.only(
+                top: 20.0,
+                bottom: 20.0,
+              ),
+              child: _buildContent(),
+            ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       floatingActionButton: ThemedFAB(
         iconData: Icons.save,
@@ -160,89 +196,132 @@ class _EditSessionScreenState extends State<EditSessionScreen> {
   }
 }
 
-class _DateTimeItem extends StatelessWidget {
-  const _DateTimeItem({
-    Key key,
-    @required this.title,
-    @required this.date,
-    @required this.onNewDateTime,
-  }) : super(key: key);
-
+class _DateTimeRow extends StatelessWidget {
   final String title;
-  final DateTime date;
-  final void Function(DateTime p1) onNewDateTime;
+  final DateTime datetime;
+  final void Function(DateTime) onDateTimeChange;
+
+  _DateTimeRow({
+    @required this.title,
+    @required this.datetime,
+    @required this.onDateTimeChange,
+  });
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(top: 20, bottom: 20),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text(
-            title,
-            style: Theme.of(context).textTheme.headline5,
-          ),
-          InkWell(
-            splashFactory: InkRipple.splashFactory,
-            onTap: () => showDatePicker(
-              context: context,
-              initialDate: date,
-              firstDate: DateTime.fromMicrosecondsSinceEpoch(0),
-              lastDate: DateTime.parse("3000-01-01"),
-            ).then((newDateTime) {
-              if (newDateTime != null) {
-                onNewDateTime(
-                  DateTime(
-                    newDateTime.year,
-                    newDateTime.month,
-                    newDateTime.day,
-                    date.hour,
-                    date.minute,
-                    date.second,
-                  ),
-                );
-              }
-            }),
-            child: Container(
-              padding: EdgeInsets.all(10),
-              child: Text(
-                DateFormat.MMMd().format(date),
-                style: Theme.of(context).textTheme.headline5,
-              ),
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        Text(
+          title,
+          style: Theme.of(context).textTheme.subtitle1,
+        ),
+        Spacer(),
+        _TimeWidget(
+          date: datetime,
+          onTimeChange: (newDateTime) => onDateTimeChange(newDateTime),
+        ),
+        _DateWidget(
+          date: datetime,
+          onDateChange: (newDateTime) => onDateTimeChange(newDateTime),
+        ),
+      ],
+    );
+  }
+}
+
+class _DateWidget extends StatelessWidget {
+  final DateTime date;
+  final void Function(DateTime) onDateChange;
+
+  const _DateWidget({
+    @required this.date,
+    @required this.onDateChange,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return _LargeFlatButton(
+      text: DateFormat.MMMd().format(date),
+      onTap: () => showDatePicker(
+        context: context,
+        initialDate: date,
+        firstDate: DateTime.fromMicrosecondsSinceEpoch(0),
+        lastDate: DateTime.parse("3000-01-01"),
+      ).then((newDateTime) {
+        if (newDateTime != null) {
+          onDateChange(
+            DateTime(
+              newDateTime.year,
+              newDateTime.month,
+              newDateTime.day,
+              date.hour,
+              date.minute,
+              date.second,
             ),
-          ),
-          InkWell(
-            splashFactory: InkRipple.splashFactory,
-            onTap: () => showTimePicker(
-              context: context,
-              helpText: 'Select new time',
-              confirmText: 'SAVE',
-              initialTime: TimeOfDay.fromDateTime(date),
-            ).then((timeOfDay) {
-              if (timeOfDay != null) {
-                onNewDateTime(
-                  DateTime(
-                    date.year,
-                    date.month,
-                    date.day,
-                    timeOfDay.hour,
-                    timeOfDay.minute,
-                    date.second,
-                  ),
-                );
-              }
-            }),
-            child: Container(
-              padding: EdgeInsets.all(10),
-              child: Text(
-                DateFormat.jms().format(date),
-                style: Theme.of(context).textTheme.headline5,
-              ),
+          );
+        }
+      }),
+    );
+  }
+}
+
+class _TimeWidget extends StatelessWidget {
+  final DateTime date;
+  final void Function(DateTime) onTimeChange;
+
+  const _TimeWidget({
+    @required this.date,
+    @required this.onTimeChange,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return _LargeFlatButton(
+      text: DateFormat.jms().format(date),
+      onTap: () => showTimePicker(
+        context: context,
+        helpText: 'Select new time',
+        confirmText: 'SAVE',
+        initialTime: TimeOfDay.fromDateTime(date),
+      ).then((timeOfDay) {
+        if (timeOfDay != null) {
+          onTimeChange(
+            DateTime(
+              date.year,
+              date.month,
+              date.day,
+              timeOfDay.hour,
+              timeOfDay.minute,
+              date.second,
             ),
+          );
+        }
+      }),
+    );
+  }
+}
+
+class _LargeFlatButton extends StatelessWidget {
+  final String text;
+  final void Function() onTap;
+
+  _LargeFlatButton({@required this.text, @required this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    return FlatButton(
+      onPressed: onTap,
+      child: Container(
+        padding: EdgeInsets.fromLTRB(5.0, 15.0, 5.0, 15.0),
+        child: Text(
+          text,
+          style: TextStyle(
+            fontSize: Theme.of(context).textTheme.subtitle1.fontSize,
           ),
-        ],
+          overflow: TextOverflow.ellipsis,
+        ),
       ),
     );
   }
