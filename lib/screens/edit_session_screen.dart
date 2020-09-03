@@ -237,41 +237,6 @@ class _EditSessionScreenState extends State<EditSessionScreen> {
   }
 }
 
-class _DateTimeRow extends StatelessWidget {
-  final String title;
-  final DateTime datetime;
-  final void Function(DateTime) onDateTimeChange;
-
-  _DateTimeRow({
-    @required this.title,
-    @required this.datetime,
-    @required this.onDateTimeChange,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        Text(
-          title,
-          style: Theme.of(context).textTheme.subtitle1,
-        ),
-        Spacer(),
-        _TimeWidget(
-          date: datetime,
-          onTimeChange: (newDateTime) => onDateTimeChange(newDateTime),
-        ),
-        _DateWidget(
-          date: datetime,
-          onDateChange: (newDateTime) => onDateTimeChange(newDateTime),
-        ),
-      ],
-    );
-  }
-}
-
 class _DateWidget extends StatelessWidget {
   final DateTime date;
   final void Function(DateTime) onDateChange;
