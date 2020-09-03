@@ -19,6 +19,7 @@ import 'package:productivity_tracker/blocs/sessions/sessions_bloc.dart';
 import 'package:productivity_tracker/blocs/timer/timer_cubit.dart';
 import 'package:productivity_tracker/db/database.dart';
 import 'package:productivity_tracker/router.dart';
+import 'package:productivity_tracker/theme/styles.dart';
 import 'package:productivity_tracker/widgets/sessions_list_item.dart';
 import 'package:productivity_tracker/widgets/themed_fab.dart';
 import 'package:productivity_tracker/widgets/timer.dart';
@@ -30,30 +31,39 @@ class OverviewScreen extends StatefulWidget {
 
 class _OverviewScreenState extends State<OverviewScreen> {
   Timer timer;
+  ScrollController scrollController;
 
   @override
   void initState() {
     super.initState();
     timer = Timer();
+    scrollController = ScrollController();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      primary: true,
       appBar: AppBar(
         title: Text('Overview'),
+        flexibleSpace: Container(
+          decoration: BoxDecoration(gradient: appBarGradient),
+        ),
       ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: <Widget>[
-            timer,
-            // ProjectSelector(),
-            // ProjectCreator(),
-            Expanded(
-              child: _SessionsListView(),
-            ),
-          ],
+      body: SafeArea(
+        top: false,
+        child: SingleChildScrollView(
+          controller: scrollController,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: <Widget>[
+              Padding(
+                padding: const EdgeInsets.all(6.0),
+                child: timer,
+              ),
+              _SessionsListView(scrollController),
+            ],
+          ),
         ),
       ),
       floatingActionButton: _TimerControlFAB(),
@@ -63,6 +73,10 @@ class _OverviewScreenState extends State<OverviewScreen> {
 }
 
 class _SessionsListView extends StatelessWidget {
+  final ScrollController scrollController;
+
+  _SessionsListView(this.scrollController);
+
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<SessionsBloc, SessionsState>(
@@ -81,7 +95,9 @@ class _SessionsListView extends StatelessWidget {
             return s2.end.compareTo(s1.end);
           });
           return ListView.builder(
+            padding: EdgeInsets.zero,
             scrollDirection: Axis.vertical,
+            controller: scrollController,
             shrinkWrap: true,
             itemCount: sessions.length,
             itemBuilder: (context, index) {

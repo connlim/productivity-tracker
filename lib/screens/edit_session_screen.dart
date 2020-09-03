@@ -216,6 +216,9 @@ class _EditSessionScreenState extends State<EditSessionScreen> {
               onPressed: _onDelete,
             ),
         ],
+        flexibleSpace: Container(
+          decoration: BoxDecoration(gradient: appBarGradient),
+        ),
       ),
       body: widget.session == null
           ? Container()

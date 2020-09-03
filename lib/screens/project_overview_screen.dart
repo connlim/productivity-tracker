@@ -18,6 +18,7 @@ import 'package:productivity_tracker/blocs/filtered_sessions/filtered_sessions_c
 import 'package:productivity_tracker/blocs/sessions/sessions_bloc.dart';
 import 'package:productivity_tracker/db/database.dart';
 import 'package:productivity_tracker/router.dart';
+import 'package:productivity_tracker/theme/styles.dart';
 import 'package:productivity_tracker/widgets/sessions_list_item.dart';
 
 class ProjectOverviewScreen extends StatelessWidget {
@@ -30,6 +31,9 @@ class ProjectOverviewScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text(project.name),
+        flexibleSpace: Container(
+          decoration: BoxDecoration(gradient: appBarGradient),
+        ),
       ),
       body: SafeArea(
         child: BlocProvider(

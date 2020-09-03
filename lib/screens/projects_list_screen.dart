@@ -27,6 +27,9 @@ class ProjectsListScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text('Projects'),
+        flexibleSpace: Container(
+          decoration: BoxDecoration(gradient: appBarGradient),
+        ),
       ),
       body: SafeArea(
         child: _ProjectsListView(),

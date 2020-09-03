@@ -15,14 +15,29 @@
 
 import 'package:flutter/material.dart';
 
-final bottomSheetShape = RoundedRectangleBorder(
+const Color primaryColor = Color(0xFF1074cc);
+const Color primaryVariant = Color(0xFF004d9e);
+const Color secondaryColor = Color(0xFF00a5f2);
+
+final RoundedRectangleBorder bottomSheetShape = RoundedRectangleBorder(
   borderRadius: BorderRadius.circular(10.0),
+);
+
+const Gradient appBarGradient = LinearGradient(
+  colors: [primaryColor, secondaryColor],
+  begin: Alignment.topLeft,
+  end: Alignment.bottomRight,
+  tileMode: TileMode.clamp,
 );
 
 final ThemeData lightTheme = _buildLightTheme();
 
 TextTheme _buildTextTheme(TextTheme base) {
   return base.copyWith(
+    headline1: base.headline1.copyWith(
+      fontFamily: 'GoogleSans',
+      fontSize: 80.0,
+    ),
     headline3: base.headline2.copyWith(
       fontFamily: 'GoogleSans',
       fontWeight: FontWeight.normal,
@@ -34,10 +49,6 @@ TextTheme _buildTextTheme(TextTheme base) {
 }
 
 ThemeData _buildLightTheme() {
-  const Color primaryColor = Color(0xFF1178d0);
-  const Color primaryVariant = Color(0xFF004d9e);
-  const Color secondaryColor = Color(0xFF00b0ff);
-
   final ColorScheme colorScheme = const ColorScheme.light().copyWith(
     primary: primaryColor,
     primaryVariant: primaryVariant,
@@ -56,6 +67,12 @@ ThemeData _buildLightTheme() {
       textTheme: ButtonTextTheme.primary,
     ),
     iconTheme: IconThemeData(color: Colors.white),
+    canvasColor: Colors.grey[100],
+    // appBarTheme: AppBarTheme(
+    //   color: Colors.white.withOpacity(0.6),
+    //   textTheme: TextTheme(headline3: ),
+    //   elevation: 0,
+    // ),
   );
 
   return base.copyWith(
