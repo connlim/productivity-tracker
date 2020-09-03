@@ -15,16 +15,16 @@ Open-source [Flutter](https://flutter.dev/) app to track your productivity throu
 * Organize sessions by projects
 
 ### Planned Features
-[] Add support for per-session notes (to detail what you did in each session)
-[] Add new session records without having to start the timer
-[] Edit project details
-[] See total time spent on each project
-[] Track changes in productivity between days and weeks
-[] Organize projects by tags (e.g. programming tag: flutter app, java, web dev)
-[] Improve UI
-[] Background service
-[] Export and import data
-[] F-Droid release
+- [ ] Add support for per-session notes (to detail what you did in each session)
+- [ ] Add new session records without having to start the timer
+- [ ] Edit project details
+- [ ] See total time spent on each project
+- [ ] Track changes in productivity between days and weeks
+- [ ] Organize projects by tags (e.g. programming tag: flutter app, java, web dev)
+- [ ] Improve UI
+- [ ] Background service
+- [ ] Export and import data
+- [ ] F-Droid release
 
 ## Development
 You need to install [Flutter](https://flutter.dev/) on your system first.
