@@ -56,16 +56,28 @@ class SessionDao extends DatabaseAccessor<Database> with _$SessionDaoMixin {
   Future updateSession(Insertable<Session> s) => update(sessions).replace(s);
   Future deleteSession(Insertable<Session> s) => delete(sessions).delete(s);
 
-  Future<Session> createAndInsertSession(DateTime start,
-      [DateTime end, Project project]) {
+  Future<Session> createAndInsertSession({
+    @required DateTime start,
+    DateTime end,
+    String notes,
+    int projectId,
+  }) {
     return insertSession(
       SessionsCompanion(
         start: Value(start),
         end: Value(end),
+        notes: Value(notes),
+        projectId: Value(projectId),
       ),
     ).then(
       (id) {
-        return Session(id: id, start: start, end: end);
+        return Session(
+          id: id,
+          start: start,
+          end: end,
+          notes: notes,
+          projectId: projectId,
+        );
       },
     );
   }

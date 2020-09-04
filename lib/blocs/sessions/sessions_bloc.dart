@@ -63,7 +63,11 @@ class SessionsBloc extends Bloc<SessionsEvent, SessionsState> {
     if (state is SessionsLoadSuccess) {
       final successState = (state as SessionsLoadSuccess);
       final session = await sessionDao.createAndInsertSession(
-          event.session.start, event.session.end);
+        start: event.session.start,
+        end: event.session.end,
+        notes: event.session.notes,
+        projectId: event.session.projectId,
+      );
       final List<Session> updatedSessions = [session] + successState.sessions;
       yield SessionsLoadSuccess(
         sessions: updatedSessions,
@@ -117,7 +121,6 @@ class SessionsBloc extends Bloc<SessionsEvent, SessionsState> {
 
   Stream<SessionsState> _mapSessionStartedToState(SessionStarted event) async* {
     if (state is SessionsLoadSuccess) {
-      // final session = await sessionDao.createAndInsertSession(event.start);
       yield SessionsLoadSuccess(
         sessions: (state as SessionsLoadSuccess).sessions,
         inProgressSession: Session(id: null, start: event.start),
@@ -129,20 +132,16 @@ class SessionsBloc extends Bloc<SessionsEvent, SessionsState> {
     if (state is SessionsLoadSuccess) {
       final successState = (state as SessionsLoadSuccess);
       final inProgressSession = successState.inProgressSession;
-      // final newSession = Session(
-      //   id: inProgressSession.id,
-      //   start: inProgressSession.start,
-      //   end: event.end,
-      // );
       final newSession = await sessionDao.createAndInsertSession(
-        inProgressSession.start,
-        event.end,
+        start: inProgressSession.start,
+        end: event.end,
+        notes: inProgressSession.notes,
+        projectId: inProgressSession.projectId,
       );
       yield SessionsLoadSuccess(
         sessions: successState.sessions + [newSession],
         inProgressSession: null,
       );
-      // sessionDao.updateSession(newSession);
     }
   }
 }

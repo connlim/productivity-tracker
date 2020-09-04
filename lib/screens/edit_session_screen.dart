@@ -42,6 +42,7 @@ class EditSessionScreen extends StatefulWidget {
 class _EditSessionScreenState extends State<EditSessionScreen> {
   DateTime _start, _end;
   Project _selectedProject;
+  TextEditingController _textEditingController;
   final bool sessionInProgress;
 
   _EditSessionScreenState(this.sessionInProgress);
@@ -52,6 +53,7 @@ class _EditSessionScreenState extends State<EditSessionScreen> {
 
     _start = widget.session.start;
     _end = widget.session.end;
+    _textEditingController = TextEditingController(text: widget.session.notes);
 
     var projectsBlocState = BlocProvider.of<ProjectsBloc>(context).state;
     if (projectsBlocState is ProjectsLoadSuccess)
@@ -71,6 +73,7 @@ class _EditSessionScreenState extends State<EditSessionScreen> {
       start: _start,
       end: sessionInProgress ? null : _end,
       projectId: _selectedProject?.id,
+      notes: _textEditingController.text,
     );
     BlocProvider.of<SessionsBloc>(context).add(
       SessionUpdated(
@@ -113,6 +116,7 @@ class _EditSessionScreenState extends State<EditSessionScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
+        // Timer duration
         sessionInProgress
             ? Container()
             : Text(
@@ -120,6 +124,7 @@ class _EditSessionScreenState extends State<EditSessionScreen> {
                 style: Theme.of(context).textTheme.headline2,
               ),
         Divider(height: 30.0),
+        // Start and end times
         Padding(
           padding: const EdgeInsets.only(left: 30.0, right: 5.0),
           child: Column(
@@ -162,6 +167,7 @@ class _EditSessionScreenState extends State<EditSessionScreen> {
           ),
         ),
         Divider(height: 30.0),
+        // Project Selector
         Padding(
           padding: const EdgeInsets.only(left: 30.0, right: 5.0),
           child: Row(
@@ -200,6 +206,21 @@ class _EditSessionScreenState extends State<EditSessionScreen> {
           ),
         ),
         Divider(height: 30.0),
+        Padding(
+          padding: const EdgeInsets.only(left: 30.0, right: 30.0),
+          child: TextField(
+            decoration: InputDecoration(
+              border: OutlineInputBorder(),
+              labelText: 'Notes',
+              floatingLabelBehavior: FloatingLabelBehavior.always,
+            ),
+            controller: _textEditingController,
+            keyboardType: TextInputType.multiline,
+            minLines: 5,
+            maxLines: null,
+          ),
+        ),
+        Divider(height: 30.0),
       ],
     );
   }
@@ -222,13 +243,17 @@ class _EditSessionScreenState extends State<EditSessionScreen> {
       ),
       body: widget.session == null
           ? Container()
-          : Container(
-              alignment: Alignment.topCenter,
-              padding: EdgeInsets.only(
-                top: 20.0,
-                bottom: 20.0,
+          : SafeArea(
+              child: SingleChildScrollView(
+                child: Container(
+                  alignment: Alignment.topCenter,
+                  padding: EdgeInsets.only(
+                    top: 20.0,
+                    bottom: 20.0,
+                  ),
+                  child: _buildContent(),
+                ),
               ),
-              child: _buildContent(),
             ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       floatingActionButton: ThemedFAB(
