@@ -15,7 +15,10 @@
 import 'package:flutter/material.dart';
 
 final RoundedRectangleBorder bottomSheetShape = RoundedRectangleBorder(
-  borderRadius: BorderRadius.circular(10.0),
+  borderRadius: BorderRadius.only(
+    topLeft: Radius.circular(10.0),
+    topRight: Radius.circular(10.0),
+  ),
 );
 
 class BottomSheetTitle extends StatelessWidget {
