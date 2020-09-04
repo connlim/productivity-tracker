@@ -11,18 +11,27 @@ class Session extends DataClass implements Insertable<Session> {
   final int id;
   final DateTime start;
   final DateTime end;
+  final String notes;
   final int projectId;
-  Session({@required this.id, @required this.start, this.end, this.projectId});
+  Session(
+      {@required this.id,
+      @required this.start,
+      this.end,
+      this.notes,
+      this.projectId});
   factory Session.fromData(Map<String, dynamic> data, GeneratedDatabase db,
       {String prefix}) {
     final effectivePrefix = prefix ?? '';
     final intType = db.typeSystem.forDartType<int>();
     final dateTimeType = db.typeSystem.forDartType<DateTime>();
+    final stringType = db.typeSystem.forDartType<String>();
     return Session(
       id: intType.mapFromDatabaseResponse(data['${effectivePrefix}id']),
       start:
           dateTimeType.mapFromDatabaseResponse(data['${effectivePrefix}start']),
       end: dateTimeType.mapFromDatabaseResponse(data['${effectivePrefix}end']),
+      notes:
+          stringType.mapFromDatabaseResponse(data['${effectivePrefix}notes']),
       projectId:
           intType.mapFromDatabaseResponse(data['${effectivePrefix}project_id']),
     );
@@ -39,6 +48,9 @@ class Session extends DataClass implements Insertable<Session> {
     if (!nullToAbsent || end != null) {
       map['end'] = Variable<DateTime>(end);
     }
+    if (!nullToAbsent || notes != null) {
+      map['notes'] = Variable<String>(notes);
+    }
     if (!nullToAbsent || projectId != null) {
       map['project_id'] = Variable<int>(projectId);
     }
@@ -51,6 +63,8 @@ class Session extends DataClass implements Insertable<Session> {
       start:
           start == null && nullToAbsent ? const Value.absent() : Value(start),
       end: end == null && nullToAbsent ? const Value.absent() : Value(end),
+      notes:
+          notes == null && nullToAbsent ? const Value.absent() : Value(notes),
       projectId: projectId == null && nullToAbsent
           ? const Value.absent()
           : Value(projectId),
@@ -64,6 +78,7 @@ class Session extends DataClass implements Insertable<Session> {
       id: serializer.fromJson<int>(json['id']),
       start: serializer.fromJson<DateTime>(json['start']),
       end: serializer.fromJson<DateTime>(json['end']),
+      notes: serializer.fromJson<String>(json['notes']),
       projectId: serializer.fromJson<int>(json['projectId']),
     );
   }
@@ -74,15 +89,22 @@ class Session extends DataClass implements Insertable<Session> {
       'id': serializer.toJson<int>(id),
       'start': serializer.toJson<DateTime>(start),
       'end': serializer.toJson<DateTime>(end),
+      'notes': serializer.toJson<String>(notes),
       'projectId': serializer.toJson<int>(projectId),
     };
   }
 
-  Session copyWith({int id, DateTime start, DateTime end, int projectId}) =>
+  Session copyWith(
+          {int id,
+          DateTime start,
+          DateTime end,
+          String notes,
+          int projectId}) =>
       Session(
         id: id ?? this.id,
         start: start ?? this.start,
         end: end ?? this.end,
+        notes: notes ?? this.notes,
         projectId: projectId ?? this.projectId,
       );
   @override
@@ -91,14 +113,17 @@ class Session extends DataClass implements Insertable<Session> {
           ..write('id: $id, ')
           ..write('start: $start, ')
           ..write('end: $end, ')
+          ..write('notes: $notes, ')
           ..write('projectId: $projectId')
           ..write(')'))
         .toString();
   }
 
   @override
-  int get hashCode => $mrjf($mrjc(id.hashCode,
-      $mrjc(start.hashCode, $mrjc(end.hashCode, projectId.hashCode))));
+  int get hashCode => $mrjf($mrjc(
+      id.hashCode,
+      $mrjc(start.hashCode,
+          $mrjc(end.hashCode, $mrjc(notes.hashCode, projectId.hashCode)))));
   @override
   bool operator ==(dynamic other) =>
       identical(this, other) ||
@@ -106,6 +131,7 @@ class Session extends DataClass implements Insertable<Session> {
           other.id == this.id &&
           other.start == this.start &&
           other.end == this.end &&
+          other.notes == this.notes &&
           other.projectId == this.projectId);
 }
 
@@ -113,29 +139,34 @@ class SessionsCompanion extends UpdateCompanion<Session> {
   final Value<int> id;
   final Value<DateTime> start;
   final Value<DateTime> end;
+  final Value<String> notes;
   final Value<int> projectId;
   const SessionsCompanion({
     this.id = const Value.absent(),
     this.start = const Value.absent(),
     this.end = const Value.absent(),
+    this.notes = const Value.absent(),
     this.projectId = const Value.absent(),
   });
   SessionsCompanion.insert({
     this.id = const Value.absent(),
     @required DateTime start,
     this.end = const Value.absent(),
+    this.notes = const Value.absent(),
     this.projectId = const Value.absent(),
   }) : start = Value(start);
   static Insertable<Session> custom({
     Expression<int> id,
     Expression<DateTime> start,
     Expression<DateTime> end,
+    Expression<String> notes,
     Expression<int> projectId,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
       if (start != null) 'start': start,
       if (end != null) 'end': end,
+      if (notes != null) 'notes': notes,
       if (projectId != null) 'project_id': projectId,
     });
   }
@@ -144,11 +175,13 @@ class SessionsCompanion extends UpdateCompanion<Session> {
       {Value<int> id,
       Value<DateTime> start,
       Value<DateTime> end,
+      Value<String> notes,
       Value<int> projectId}) {
     return SessionsCompanion(
       id: id ?? this.id,
       start: start ?? this.start,
       end: end ?? this.end,
+      notes: notes ?? this.notes,
       projectId: projectId ?? this.projectId,
     );
   }
@@ -165,6 +198,9 @@ class SessionsCompanion extends UpdateCompanion<Session> {
     if (end.present) {
       map['end'] = Variable<DateTime>(end.value);
     }
+    if (notes.present) {
+      map['notes'] = Variable<String>(notes.value);
+    }
     if (projectId.present) {
       map['project_id'] = Variable<int>(projectId.value);
     }
@@ -177,6 +213,7 @@ class SessionsCompanion extends UpdateCompanion<Session> {
           ..write('id: $id, ')
           ..write('start: $start, ')
           ..write('end: $end, ')
+          ..write('notes: $notes, ')
           ..write('projectId: $projectId')
           ..write(')'))
         .toString();
@@ -220,6 +257,18 @@ class $SessionsTable extends Sessions with TableInfo<$SessionsTable, Session> {
     );
   }
 
+  final VerificationMeta _notesMeta = const VerificationMeta('notes');
+  GeneratedTextColumn _notes;
+  @override
+  GeneratedTextColumn get notes => _notes ??= _constructNotes();
+  GeneratedTextColumn _constructNotes() {
+    return GeneratedTextColumn(
+      'notes',
+      $tableName,
+      true,
+    );
+  }
+
   final VerificationMeta _projectIdMeta = const VerificationMeta('projectId');
   GeneratedIntColumn _projectId;
   @override
@@ -230,7 +279,7 @@ class $SessionsTable extends Sessions with TableInfo<$SessionsTable, Session> {
   }
 
   @override
-  List<GeneratedColumn> get $columns => [id, start, end, projectId];
+  List<GeneratedColumn> get $columns => [id, start, end, notes, projectId];
   @override
   $SessionsTable get asDslTable => this;
   @override
@@ -254,6 +303,10 @@ class $SessionsTable extends Sessions with TableInfo<$SessionsTable, Session> {
     if (data.containsKey('end')) {
       context.handle(
           _endMeta, end.isAcceptableOrUnknown(data['end'], _endMeta));
+    }
+    if (data.containsKey('notes')) {
+      context.handle(
+          _notesMeta, notes.isAcceptableOrUnknown(data['notes'], _notesMeta));
     }
     if (data.containsKey('project_id')) {
       context.handle(_projectIdMeta,

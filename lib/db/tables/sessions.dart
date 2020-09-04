@@ -21,6 +21,7 @@ class Sessions extends Table {
   IntColumn get id => integer().autoIncrement()();
   DateTimeColumn get start => dateTime()();
   DateTimeColumn get end => dateTime().nullable()();
+  TextColumn get notes => text().nullable()();
   IntColumn get projectId =>
       integer().nullable().customConstraint('NULL REFERENCES projects(id)')();
 }

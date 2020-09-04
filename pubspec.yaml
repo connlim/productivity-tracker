@@ -40,8 +40,8 @@ dev_dependencies:
   moor_generator: ^3.3.1
   build_runner: 
 
-dependency_overrides:
-  analyzer: '0.39.14'
+# dependency_overrides:
+#   analyzer: '0.39.14'
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
