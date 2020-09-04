@@ -24,15 +24,34 @@ import 'package:productivity_tracker/theme/styles.dart';
 import 'package:productivity_tracker/utils/date_utils.dart';
 import 'package:productivity_tracker/widgets/session_details/editable_date.dart';
 import 'package:productivity_tracker/widgets/session_details/editable_time.dart';
-import 'package:productivity_tracker/widgets/select_project_modal.dart';
 import 'package:productivity_tracker/widgets/session_details/selectable_project.dart';
 import 'package:productivity_tracker/widgets/themed_fab.dart';
 
 class EditSessionScreen extends StatefulWidget {
-  static const String _title = "Edit Session";
+  final String title;
   final Session session;
+  final bool createNewSession;
 
-  EditSessionScreen({Key key, @required this.session}) : super(key: key);
+  /// Screen for user to edit session details. Updates session model on save.
+  ///
+  /// [session] cannot be null.
+  /// If [session.end] is [null], then the duration and end datetime fields
+  /// will not be shown.
+  /// If [createNewSession] is [true], a new session will be created instead of
+  /// updating an existing one.
+  EditSessionScreen({
+    Key key,
+    @required this.session,
+  })  : assert(session != null),
+        createNewSession = false,
+        title = 'Edit Session',
+        super(key: key);
+
+  EditSessionScreen.createSession({Key key})
+      : createNewSession = true,
+        title = 'Create New Session',
+        session = Session(id: null, start: DateTime.now(), end: DateTime.now()),
+        super(key: key);
 
   @override
   _EditSessionScreenState createState() {
@@ -73,14 +92,14 @@ class _EditSessionScreenState extends State<EditSessionScreen> {
     final updatedSession = Session(
       id: widget.session.id,
       start: _start,
-      end: sessionInProgress ? null : _end,
+      end: _end,
       projectId: _selectedProject?.id,
       notes: _textEditingController.text,
     );
     BlocProvider.of<SessionsBloc>(context).add(
-      SessionUpdated(
-        session: updatedSession,
-      ),
+      widget.createNewSession
+          ? SessionAdded(session: updatedSession)
+          : SessionUpdated(session: updatedSession),
     );
     Navigator.pop(context);
   }
@@ -114,114 +133,13 @@ class _EditSessionScreenState extends State<EditSessionScreen> {
     );
   }
 
-  Widget _buildContent() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        // Timer duration
-        sessionInProgress
-            ? Container()
-            : Text(
-                formatTimerDuration(_end.difference(_start)),
-                style: Theme.of(context).textTheme.headline2,
-              ),
-        Divider(height: 30.0),
-        // Start and end times
-        Padding(
-          padding: const EdgeInsets.only(left: 30.0, right: 5.0),
-          child: Column(
-            children: [
-              Align(
-                alignment: Alignment.centerLeft,
-                child: Text(
-                  'Set Date and Time',
-                  style: Theme.of(context).textTheme.subtitle1.copyWith(
-                        fontWeight: FontWeight.bold,
-                      ),
-                ),
-              ),
-              SizedBox(height: 10.0),
-              Table(
-                defaultVerticalAlignment: TableCellVerticalAlignment.middle,
-                columnWidths: {
-                  0: FlexColumnWidth(1),
-                  1: FlexColumnWidth(3),
-                  2: IntrinsicColumnWidth(),
-                },
-                children: [
-                  _buildDateTimeRow(
-                      title: 'Start',
-                      datetime: _start,
-                      onDateTimeChange: (newDateTime) => setState(() {
-                            _start = newDateTime;
-                          })),
-                  if (!sessionInProgress)
-                    _buildDateTimeRow(
-                      title: 'End',
-                      datetime: _end,
-                      onDateTimeChange: (newDateTime) => setState(() {
-                        _end = newDateTime;
-                      }),
-                    )
-                ],
-              ),
-            ],
-          ),
-        ),
-        Divider(height: 30.0),
-        // Project Selector
-        Padding(
-          padding: const EdgeInsets.only(left: 30.0, right: 5.0),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                'Select Project',
-                style: Theme.of(context).textTheme.subtitle1.copyWith(
-                      fontWeight: FontWeight.bold,
-                    ),
-              ),
-              // Prevent button from touching select project text
-              SizedBox(width: 10.0),
-              Flexible(
-                fit: FlexFit.loose,
-                child: SelectableProject(
-                  selectedProject: _selectedProject,
-                  onSelectionChange: (project) => setState(() {
-                    _selectedProject = project;
-                  }),
-                ),
-              ),
-            ],
-          ),
-        ),
-        Divider(height: 30.0),
-        Padding(
-          padding: const EdgeInsets.only(left: 30.0, right: 30.0),
-          child: TextField(
-            decoration: InputDecoration(
-              border: OutlineInputBorder(),
-              labelText: 'Notes',
-              floatingLabelBehavior: FloatingLabelBehavior.always,
-            ),
-            controller: _textEditingController,
-            keyboardType: TextInputType.multiline,
-            minLines: 5,
-            maxLines: null,
-          ),
-        ),
-        Divider(height: 30.0),
-      ],
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(EditSessionScreen._title),
+        title: Text(widget.title),
         actions: [
-          if (!sessionInProgress)
+          if (!sessionInProgress && !widget.createNewSession)
             IconButton(
               icon: Icon(Icons.delete),
               onPressed: _onDelete,
@@ -231,20 +149,111 @@ class _EditSessionScreenState extends State<EditSessionScreen> {
           decoration: BoxDecoration(gradient: appBarGradient),
         ),
       ),
-      body: widget.session == null
-          ? Container()
-          : SafeArea(
-              child: SingleChildScrollView(
-                child: Container(
-                  alignment: Alignment.topCenter,
-                  padding: EdgeInsets.only(
-                    top: 20.0,
-                    bottom: 20.0,
-                  ),
-                  child: _buildContent(),
+      body: SafeArea(
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              SizedBox(height: 20.0),
+              // Timer duration
+              sessionInProgress
+                  ? Container()
+                  : Text(
+                      formatTimerDuration(_end.difference(_start)),
+                      style: Theme.of(context).textTheme.headline2,
+                    ),
+              Divider(height: 30.0),
+              // Start and end times
+              Padding(
+                padding: const EdgeInsets.only(left: 30.0, right: 5.0),
+                child: Column(
+                  children: [
+                    Align(
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        'Set Date and Time',
+                        style: Theme.of(context).textTheme.subtitle1.copyWith(
+                              fontWeight: FontWeight.bold,
+                            ),
+                      ),
+                    ),
+                    SizedBox(height: 10.0),
+                    Table(
+                      defaultVerticalAlignment:
+                          TableCellVerticalAlignment.middle,
+                      columnWidths: {
+                        0: FlexColumnWidth(1),
+                        1: FlexColumnWidth(3),
+                        2: IntrinsicColumnWidth(),
+                      },
+                      children: [
+                        _buildDateTimeRow(
+                            title: 'Start',
+                            datetime: _start,
+                            onDateTimeChange: (newDateTime) => setState(() {
+                                  _start = newDateTime;
+                                })),
+                        if (!sessionInProgress)
+                          _buildDateTimeRow(
+                            title: 'End',
+                            datetime: _end,
+                            onDateTimeChange: (newDateTime) => setState(() {
+                              _end = newDateTime;
+                            }),
+                          )
+                      ],
+                    ),
+                  ],
                 ),
               ),
-            ),
+              Divider(height: 30.0),
+              // Project Selector
+              Padding(
+                padding: const EdgeInsets.only(left: 30.0, right: 5.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      'Select Project',
+                      style: Theme.of(context).textTheme.subtitle1.copyWith(
+                            fontWeight: FontWeight.bold,
+                          ),
+                    ),
+                    // Prevent button from touching select project text
+                    SizedBox(width: 10.0),
+                    Flexible(
+                      fit: FlexFit.loose,
+                      child: SelectableProject(
+                        selectedProject: _selectedProject,
+                        onSelectionChange: (project) => setState(() {
+                          _selectedProject = project;
+                        }),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Divider(height: 30.0),
+              Padding(
+                padding: const EdgeInsets.only(left: 30.0, right: 30.0),
+                child: TextField(
+                  decoration: InputDecoration(
+                    border: OutlineInputBorder(),
+                    labelText: 'Notes',
+                    floatingLabelBehavior: FloatingLabelBehavior.always,
+                  ),
+                  controller: _textEditingController,
+                  keyboardType: TextInputType.multiline,
+                  minLines: 5,
+                  maxLines: null,
+                ),
+              ),
+              Divider(height: 30.0),
+              SizedBox(height: 20.0),
+            ],
+          ),
+        ),
+      ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       floatingActionButton: ThemedFAB(
         iconData: Icons.save,

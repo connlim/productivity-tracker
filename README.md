@@ -16,7 +16,7 @@ Open-source [Flutter](https://flutter.dev/) app to track your productivity throu
 
 ### Planned Features
 - [x] Add support for per-session notes (to detail what you did in each session)
-- [ ] Add new session records without having to start the timer
+- [x] Add new session records without having to start the timer
 - [ ] Edit project details
 - [ ] See total time spent on each project
 - [ ] Track changes in productivity between days and weeks

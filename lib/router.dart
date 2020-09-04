@@ -28,6 +28,7 @@ class EditSessionRouteArguments {
 class Router {
   static const String overviewRoute = '/overview';
   static const String editSessionRoute = '/session';
+  static const String createSessionRoute = '/create_session';
   static const String projectsListRoute = '/projects';
   static const String projectOverviewRoute = '/project_overview';
 
@@ -57,29 +58,22 @@ class Router {
   static Route<dynamic> generateRoute(RouteSettings settings,
       [Widget defaultPage]) {
     switch (settings.name) {
-      case '/':
-        if (defaultPage != null) return _createRoute(defaultPage);
-        continue noDefaultRoute;
-      noDefaultRoute:
       case overviewRoute:
         return _createRoute(OverviewScreen());
       case editSessionRoute:
         EditSessionRouteArguments args =
             settings.arguments as EditSessionRouteArguments;
         return _createRoute(EditSessionScreen(session: args.session));
+      case createSessionRoute:
+        return _createRoute(EditSessionScreen.createSession());
       case projectsListRoute:
         return _createRoute(ProjectsListScreen());
       case projectOverviewRoute:
         Project project = settings.arguments as Project;
         return _createRoute(ProjectOverviewScreen(project: project));
       default:
-        return MaterialPageRoute(
-          builder: (_) => Container(
-            child: Text(
-              'No route defined for ${settings.name}',
-            ),
-          ),
-        );
+        return _createRoute(
+            defaultPage ?? Container(child: Text('No Route Found')));
     }
   }
 }

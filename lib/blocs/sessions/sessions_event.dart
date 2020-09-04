@@ -27,7 +27,7 @@ class SessionsLoaded extends SessionsEvent {}
 class SessionAdded extends SessionsEvent {
   final Session session;
 
-  const SessionAdded(this.session);
+  const SessionAdded({@required this.session});
 
   @override
   List<Object> get props => [session];

@@ -51,16 +51,26 @@ class _OverviewScreenState extends State<OverviewScreen> {
         ),
       ),
       body: SafeArea(
-        top: false,
         child: SingleChildScrollView(
           controller: scrollController,
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
             children: <Widget>[
               Padding(
-                padding: const EdgeInsets.all(6.0),
+                padding: const EdgeInsets.fromLTRB(6.0, 6.0, 6.0, 0.0),
                 child: timer,
               ),
+              FlatButton.icon(
+                icon: Icon(Icons.add),
+                label: Text('Create Session'),
+                onPressed: () => Navigator.of(
+                  context,
+                  rootNavigator: true,
+                ).pushNamed(
+                  Router.createSessionRoute,
+                ),
+              ),
+              SizedBox(height: 8.0),
               _SessionsListView(scrollController),
             ],
           ),
@@ -124,18 +134,30 @@ class _SessionsListView extends StatelessWidget {
 }
 
 class _TimerControlFAB extends StatelessWidget {
+  Widget _buildFAB({
+    @required void Function() onTap,
+    @required bool isStarted,
+  }) {
+    return ThemedFAB(
+      title: isStarted ? 'Stop Timer' : 'Start Timer',
+      iconData: isStarted ? Icons.stop : Icons.play_arrow,
+      backgroundColor: isStarted ? Colors.red : Colors.green,
+      onTap: onTap,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<TimerCubit, TimerState>(
       builder: (context, state) {
         final TimerState state = BlocProvider.of<TimerCubit>(context).state;
         if (state is TimerRunStopped) {
-          return _BuildTimerControlFAB(
+          return _buildFAB(
             isStarted: false,
             onTap: () => BlocProvider.of<TimerCubit>(context).startTimer(),
           );
         } else if (state is TimerRunInProgress) {
-          return _BuildTimerControlFAB(
+          return _buildFAB(
             isStarted: true,
             onTap: () {
               BlocProvider.of<TimerCubit>(context).stopTimer();
@@ -145,23 +167,6 @@ class _TimerControlFAB extends StatelessWidget {
           return Container();
         }
       },
-    );
-  }
-}
-
-class _BuildTimerControlFAB extends StatelessWidget {
-  final void Function() onTap;
-  final bool isStarted;
-
-  _BuildTimerControlFAB({@required this.onTap, @required this.isStarted});
-
-  @override
-  Widget build(BuildContext context) {
-    return ThemedFAB(
-      title: isStarted ? 'Stop Timer' : 'Start Timer',
-      iconData: isStarted ? Icons.stop : Icons.play_arrow,
-      backgroundColor: isStarted ? Colors.red : Colors.green,
-      onTap: onTap,
     );
   }
 }
