@@ -18,7 +18,7 @@ import 'package:productivity_tracker/blocs/projects/projects_bloc.dart';
 import 'package:productivity_tracker/db/database.dart';
 import 'package:productivity_tracker/router.dart';
 import 'package:productivity_tracker/theme/styles.dart';
-import 'package:productivity_tracker/widgets/create_project_modal.dart';
+import 'package:productivity_tracker/widgets/bottom_sheets/create_project_modal.dart';
 import 'package:productivity_tracker/widgets/themed_fab.dart';
 
 class ProjectsListScreen extends StatelessWidget {
@@ -38,13 +38,7 @@ class ProjectsListScreen extends StatelessWidget {
         title: 'Create New Project',
         iconData: Icons.add,
         onTap: () {
-          return showModalBottomSheet<String>(
-            context: context,
-            shape: bottomSheetShape,
-            isScrollControlled: true,
-            useRootNavigator: true,
-            builder: (context) => CreateProjectModal(),
-          ).then(
+          return showProjectCreator(context: context).then(
             (String name) {
               if (name != null) {
                 BlocProvider.of<ProjectsBloc>(context)

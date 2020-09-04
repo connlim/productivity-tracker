@@ -17,11 +17,20 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:productivity_tracker/blocs/projects/projects_bloc.dart';
 import 'package:productivity_tracker/db/database.dart';
-import 'package:productivity_tracker/theme/styles.dart';
-import 'package:productivity_tracker/widgets/bottomsheet_title.dart';
-import 'package:productivity_tracker/widgets/create_project_modal.dart';
+import 'package:productivity_tracker/widgets/bottom_sheets/bottom_sheet_globals.dart';
+import 'package:productivity_tracker/widgets/bottom_sheets/create_project_modal.dart';
 
-class SelectProjectModal extends StatelessWidget {
+Future<Project> showProjectSelector({@required BuildContext context}) {
+  return showModalBottomSheet<Project>(
+    context: context,
+    shape: bottomSheetShape,
+    isScrollControlled: true,
+    useRootNavigator: true,
+    builder: (context) => _SelectProjectBottomSheet(),
+  );
+}
+
+class _SelectProjectBottomSheet extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return NotificationListener<OverscrollIndicatorNotification>(
@@ -64,13 +73,7 @@ class _CreateProjectButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return OutlineButton(
       child: Text('Create New Project'),
-      onPressed: () => showModalBottomSheet<String>(
-        context: context,
-        shape: bottomSheetShape,
-        isScrollControlled: true,
-        useRootNavigator: true,
-        builder: (context) => CreateProjectModal(),
-      ).then(
+      onPressed: () => showProjectCreator(context: context).then(
         (String name) {
           if (name != null) {
             BlocProvider.of<ProjectsBloc>(context).add(ProjectCreated(name));

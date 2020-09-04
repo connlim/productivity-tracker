@@ -19,10 +19,6 @@ const Color primaryColor = Color(0xFF1074cc);
 const Color primaryVariant = Color(0xFF004d9e);
 const Color secondaryColor = Color(0xFF00a5f2);
 
-final RoundedRectangleBorder bottomSheetShape = RoundedRectangleBorder(
-  borderRadius: BorderRadius.circular(10.0),
-);
-
 const Gradient appBarGradient = LinearGradient(
   colors: [primaryColor, secondaryColor],
   begin: Alignment.topLeft,

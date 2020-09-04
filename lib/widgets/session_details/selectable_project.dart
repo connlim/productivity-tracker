@@ -14,9 +14,8 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import 'package:flutter/material.dart';
 import 'package:productivity_tracker/db/database.dart';
-import 'package:productivity_tracker/theme/styles.dart';
+import 'package:productivity_tracker/widgets/bottom_sheets/select_project_modal.dart';
 import 'package:productivity_tracker/widgets/large_flat_button.dart';
-import 'package:productivity_tracker/widgets/select_project_modal.dart';
 
 class SelectableProject extends StatelessWidget {
   final Project selectedProject;
@@ -31,19 +30,11 @@ class SelectableProject extends StatelessWidget {
   Widget build(BuildContext context) {
     return LargeFlatButton(
       text: selectedProject?.name ?? "No Project Selected",
-      onTap: () {
-        showModalBottomSheet<Project>(
-          context: context,
-          shape: bottomSheetShape,
-          isScrollControlled: true,
-          useRootNavigator: true,
-          builder: (context) => SelectProjectModal(),
-        ).then((project) {
-          if (project != null) {
-            onSelectionChange(project);
-          }
-        });
-      },
+      onTap: () => showProjectSelector(context: context).then((project) {
+        if (project != null) {
+          onSelectionChange(project);
+        }
+      }),
     );
   }
 }

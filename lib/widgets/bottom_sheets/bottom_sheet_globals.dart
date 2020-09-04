@@ -14,6 +14,10 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import 'package:flutter/material.dart';
 
+final RoundedRectangleBorder bottomSheetShape = RoundedRectangleBorder(
+  borderRadius: BorderRadius.circular(10.0),
+);
+
 class BottomSheetTitle extends StatelessWidget {
   final String title;
   final bool showHandle;

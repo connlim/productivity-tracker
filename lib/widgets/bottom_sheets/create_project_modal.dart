@@ -14,14 +14,26 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import 'package:flutter/material.dart';
-import 'package:productivity_tracker/widgets/bottomsheet_title.dart';
+import 'package:productivity_tracker/widgets/bottom_sheets/bottom_sheet_globals.dart';
 
-class CreateProjectModal extends StatefulWidget {
+Future<String> showProjectCreator({
+  @required BuildContext context,
+}) {
+  return showModalBottomSheet<String>(
+    context: context,
+    shape: bottomSheetShape,
+    isScrollControlled: true,
+    useRootNavigator: true,
+    builder: (context) => _CreateProjectModal(),
+  );
+}
+
+class _CreateProjectModal extends StatefulWidget {
   @override
   _CreateProjectModalState createState() => _CreateProjectModalState();
 }
 
-class _CreateProjectModalState extends State<CreateProjectModal> {
+class _CreateProjectModalState extends State<_CreateProjectModal> {
   TextEditingController _controller;
 
   @override
