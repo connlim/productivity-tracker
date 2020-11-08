@@ -51,7 +51,7 @@ class ProjectOverviewScreen extends StatelessWidget {
 class _SessionsListView extends StatelessWidget {
   void _handleEditSession(BuildContext context, Session session) {
     Navigator.of(context, rootNavigator: true).pushNamed(
-      Router.editSessionRoute,
+      AppRouter.editSessionRoute,
       arguments: EditSessionRouteArguments(session: session),
     );
   }

@@ -69,7 +69,7 @@ class _ProjectsListView extends StatelessWidget {
               project: projects[index],
               onTap: () => Navigator.pushNamed(
                 context,
-                Router.projectOverviewRoute,
+                AppRouter.projectOverviewRoute,
                 arguments: projects[index],
               ),
             ),

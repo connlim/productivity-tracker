@@ -52,7 +52,7 @@ class MyApp extends StatelessWidget {
         title: 'Productivity Tracker',
         theme: lightTheme,
         home: App(),
-        onGenerateRoute: (settings) => Router.generateRoute(settings),
+        onGenerateRoute: (settings) => AppRouter.generateRoute(settings),
       ),
     );
   }

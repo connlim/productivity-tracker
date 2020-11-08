@@ -37,7 +37,7 @@ class TabItem {
       child: Navigator(
         key: navigatorKey,
         onGenerateRoute: (settings) {
-          return Router.generateRoute(settings, defaultPage);
+          return AppRouter.generateRoute(settings, defaultPage);
         },
       ),
     );

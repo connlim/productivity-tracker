@@ -67,7 +67,7 @@ class _OverviewScreenState extends State<OverviewScreen> {
                   context,
                   rootNavigator: true,
                 ).pushNamed(
-                  Router.createSessionRoute,
+                  AppRouter.createSessionRoute,
                 ),
               ),
               SizedBox(height: 8.0),
@@ -119,7 +119,7 @@ class _SessionsListView extends StatelessWidget {
                   context,
                   rootNavigator: true,
                 ).pushNamed(
-                  Router.editSessionRoute,
+                  AppRouter.editSessionRoute,
                   arguments: EditSessionRouteArguments(session: session),
                 ),
               );

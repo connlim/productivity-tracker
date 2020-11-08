@@ -25,7 +25,7 @@ class EditSessionRouteArguments {
   EditSessionRouteArguments({@required this.session});
 }
 
-class Router {
+class AppRouter {
   static const String overviewRoute = '/overview';
   static const String editSessionRoute = '/session';
   static const String createSessionRoute = '/create_session';
