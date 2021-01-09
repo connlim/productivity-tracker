@@ -22,8 +22,9 @@ class Sessions extends Table {
   DateTimeColumn get start => dateTime()();
   DateTimeColumn get end => dateTime().nullable()();
   TextColumn get notes => text().nullable()();
-  IntColumn get projectId =>
-      integer().nullable().customConstraint('NULL REFERENCES projects(id)')();
+  IntColumn get projectId => integer()
+      .nullable()
+      .customConstraint('NULL REFERENCES projects(id) ON DELETE CASCADE')();
 }
 
 @UseDao(tables: [Sessions])

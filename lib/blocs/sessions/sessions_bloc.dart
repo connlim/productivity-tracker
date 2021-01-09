@@ -28,7 +28,12 @@ part 'sessions_state.dart';
 class SessionsBloc extends Bloc<SessionsEvent, SessionsState> {
   final SessionDao sessionDao;
 
-  SessionsBloc({this.sessionDao}) : super(SessionsLoadInProgress());
+  SessionsBloc({this.sessionDao}) : super(SessionsLoadInProgress()) {
+    this
+        .sessionDao
+        .watchAllSessions()
+        .listen((sessions) => add(SessionsLoaded()));
+  }
 
   @override
   Stream<SessionsState> mapEventToState(SessionsEvent event) async* {

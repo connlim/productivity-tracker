@@ -15,22 +15,80 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:productivity_tracker/blocs/filtered_sessions/filtered_sessions_cubit.dart';
+import 'package:productivity_tracker/blocs/projects/projects_bloc.dart';
 import 'package:productivity_tracker/blocs/sessions/sessions_bloc.dart';
 import 'package:productivity_tracker/db/database.dart';
 import 'package:productivity_tracker/router.dart';
 import 'package:productivity_tracker/theme/styles.dart';
+import 'package:productivity_tracker/widgets/bottom_sheets/confirmation_modal.dart';
+import 'package:productivity_tracker/widgets/bottom_sheets/text_input_modal.dart';
 import 'package:productivity_tracker/widgets/sessions_list_item.dart';
 
-class ProjectOverviewScreen extends StatelessWidget {
+class ProjectOverviewScreen extends StatefulWidget {
   final Project project;
 
   ProjectOverviewScreen({Key key, @required this.project}) : super(key: key);
+
+  @override
+  _ProjectOverviewScreenState createState() => _ProjectOverviewScreenState(
+        project: project,
+      );
+}
+
+class _ProjectOverviewScreenState extends State<ProjectOverviewScreen> {
+  Project project;
+
+  _ProjectOverviewScreenState({@required this.project});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text(project.name),
+        actions: [
+          IconButton(
+            icon: Icon(Icons.edit),
+            onPressed: () {
+              showTextInputModal(
+                context: context,
+                title: "Edit Project",
+                label: "Name",
+                initial: project.name,
+              ).then((name) {
+                if (project.name != name && name != null) {
+                  // Project name updated
+                  setState(() {
+                    project = project.copyWith(name: name);
+                    BlocProvider.of<ProjectsBloc>(context).add(ProjectUpdated(
+                      project: project,
+                    ));
+                  });
+                }
+              });
+            },
+          ),
+          PopupMenuButton(
+            onSelected: (_) {
+              showConfirmationDialog(
+                context: context,
+                message: "Delete ${project.name}?",
+              ).then((value) {
+                if (value) {
+                  BlocProvider.of<ProjectsBloc>(context).add(ProjectDeleted(
+                    project: project,
+                  ));
+                  Navigator.pop(context);
+                }
+              });
+            },
+            itemBuilder: (context) => [
+              const PopupMenuItem(
+                value: "",
+                child: Text("Delete"),
+              )
+            ],
+          )
+        ],
         flexibleSpace: Container(
           decoration: BoxDecoration(gradient: appBarGradient),
         ),

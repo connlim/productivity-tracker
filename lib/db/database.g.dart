@@ -275,7 +275,7 @@ class $SessionsTable extends Sessions with TableInfo<$SessionsTable, Session> {
   GeneratedIntColumn get projectId => _projectId ??= _constructProjectId();
   GeneratedIntColumn _constructProjectId() {
     return GeneratedIntColumn('project_id', $tableName, true,
-        $customConstraints: 'NULL REFERENCES projects(id)');
+        $customConstraints: 'NULL REFERENCES projects(id) ON DELETE CASCADE');
   }
 
   @override

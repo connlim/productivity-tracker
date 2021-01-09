@@ -42,5 +42,30 @@ class Database extends _$Database {
   }
 
   @override
+  MigrationStrategy get migration => MigrationStrategy(
+        beforeOpen: (details) async {
+          await customStatement('PRAGMA foreign_keys = ON');
+        },
+      );
+
+  @override
+  StreamQueryUpdateRules get streamUpdateRules {
+    return StreamQueryUpdateRules([
+      WritePropagation(
+        on: TableUpdateQuery.onTable(
+          projects,
+          limitUpdateKind: UpdateKind.delete,
+        ),
+        result: [
+          TableUpdate.onTable(
+            sessions,
+            kind: UpdateKind.delete,
+          ),
+        ],
+      ),
+    ]);
+  }
+
+  @override
   int get schemaVersion => 1;
 }
