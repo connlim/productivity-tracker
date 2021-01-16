@@ -18,7 +18,7 @@ Open-source [Flutter](https://flutter.dev/) app to track your productivity throu
 - [x] Add support for per-session notes (to detail what you did in each session)
 - [x] Add new session records without having to start the timer
 - [x] Edit project details
-- [ ] Change create session to outline button
+- [x] Change create session to outline button
 - [ ] See total time spent on each project
 - [ ] Colored dots next to project name for better differentiation
 - [ ] Progress states: pending, in progress, completed

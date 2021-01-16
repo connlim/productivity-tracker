@@ -60,7 +60,7 @@ class _OverviewScreenState extends State<OverviewScreen> {
                 padding: const EdgeInsets.fromLTRB(6.0, 6.0, 6.0, 0.0),
                 child: timer,
               ),
-              FlatButton.icon(
+              OutlineButton.icon(
                 icon: Icon(Icons.add),
                 label: Text('Create Session'),
                 onPressed: () => Navigator.of(
