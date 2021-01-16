@@ -12,6 +12,8 @@
 //
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:productivity_tracker/blocs/projects/projects_bloc.dart';
@@ -20,6 +22,8 @@ import 'package:productivity_tracker/router.dart';
 import 'package:productivity_tracker/theme/styles.dart';
 import 'package:productivity_tracker/widgets/bottom_sheets/create_project_modal.dart';
 import 'package:productivity_tracker/widgets/themed_fab.dart';
+
+final _random = new Random();
 
 class ProjectsListScreen extends StatelessWidget {
   @override
@@ -95,10 +99,20 @@ class _ProjectListItem extends StatelessWidget {
       onTap: onTap,
       child: Container(
         padding: EdgeInsets.fromLTRB(30.0, 15.0, 30.0, 15.0),
-        child: Text(
-          project.name,
-          style: Theme.of(context).textTheme.subtitle1,
-          softWrap: true,
+        child: Row(
+          children: [
+            Icon(
+              Icons.circle,
+              size: 10.0,
+              color: Colors.accents[_random.nextInt(Colors.accents.length)],
+            ),
+            SizedBox(width: 20.0),
+            Text(
+              project.name,
+              style: Theme.of(context).textTheme.subtitle1,
+              softWrap: true,
+            ),
+          ],
         ),
       ),
     );
