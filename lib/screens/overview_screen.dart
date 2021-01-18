@@ -56,9 +56,25 @@ class _OverviewScreenState extends State<OverviewScreen> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
             children: <Widget>[
-              Padding(
-                padding: const EdgeInsets.fromLTRB(6.0, 6.0, 6.0, 0.0),
-                child: timer,
+              Container(
+                padding: EdgeInsets.all(20.0),
+                margin: EdgeInsets.fromLTRB(10.0, 10.0, 10.0, 10.0),
+                constraints: const BoxConstraints(minWidth: double.infinity),
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                      begin: Alignment.bottomLeft,
+                      end: Alignment.topRight,
+                      colors: [Colors.orange[800], Colors.yellow[700]]),
+                  borderRadius: BorderRadius.circular(20.0),
+                ),
+                child: Column(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(6.0, 6.0, 6.0, 6.0),
+                      child: timer,
+                    ),
+                  ],
+                ),
               ),
               OutlineButton.icon(
                 icon: Icon(Icons.add),
@@ -70,7 +86,7 @@ class _OverviewScreenState extends State<OverviewScreen> {
                   AppRouter.createSessionRoute,
                 ),
               ),
-              SizedBox(height: 8.0),
+              SizedBox(height: 10.0),
               _SessionsListView(scrollController),
             ],
           ),

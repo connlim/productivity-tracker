@@ -24,7 +24,10 @@ class Timer extends StatelessWidget {
     return BlocBuilder<TimerCubit, TimerState>(
       builder: (context, state) => Text(
         formatTimerDuration(Duration(seconds: state.duration)),
-        style: Theme.of(context).textTheme.headline1,
+        style: Theme.of(context).textTheme.headline1.copyWith(
+              color: Colors.white,
+              fontWeight: FontWeight.w300,
+            ),
       ),
     );
   }
