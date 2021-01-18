@@ -37,10 +37,9 @@ You need to install [Flutter](https://flutter.dev/) on your system first.
 ```bash
 flutter pub get # get packages
 
+flutter packages pub run build_runner build # generate dart files
+
 flutter run # run in debug mode
 ```
 
-If you change any files in `/lib/db/`, be sure to run the following command to rebuild the generated files:
-```bash
-flutter packages pub run build_runner build
-```
+If you change any files in `/lib/db/`, be sure to run `flutter packages pub run build_runner build` to regenerate the `.g.dart` files.
