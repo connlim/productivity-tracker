@@ -73,7 +73,7 @@ class AppState extends State<App> {
               .map(
                 (e) => BottomNavigationBarItem(
                   icon: Icon(e.icon),
-                  title: Text(e.title),
+                  label: e.title,
                 ),
               )
               .toList(),
