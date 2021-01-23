@@ -22,7 +22,6 @@ Open-source [Flutter](https://flutter.dev/) app to track your productivity throu
 - [ ] See total time spent on each project
 - [x] Colored dots next to project name for better differentiation
 - [ ] Progress states: pending, in progress, completed
-- [x] Make timer stand out from background
 - [ ] Change color scheme
 - [ ] Add more symbols
 - [ ] Organize projects by tags (e.g. programming tag: flutter app, java, web dev)

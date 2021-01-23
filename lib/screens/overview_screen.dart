@@ -57,14 +57,10 @@ class _OverviewScreenState extends State<OverviewScreen> {
             mainAxisAlignment: MainAxisAlignment.start,
             children: <Widget>[
               Container(
-                padding: EdgeInsets.all(20.0),
+                padding: EdgeInsets.all(10.0),
                 margin: EdgeInsets.fromLTRB(10.0, 10.0, 10.0, 10.0),
                 constraints: const BoxConstraints(minWidth: double.infinity),
                 decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                      begin: Alignment.bottomLeft,
-                      end: Alignment.topRight,
-                      colors: [Colors.orange[800], Colors.yellow[700]]),
                   borderRadius: BorderRadius.circular(20.0),
                 ),
                 child: Column(
