@@ -26,8 +26,9 @@ class ProjectsLoaded extends ProjectsEvent {}
 
 class ProjectCreated extends ProjectsEvent {
   final String name;
+  final Status status;
 
-  const ProjectCreated(this.name);
+  const ProjectCreated(this.name, [this.status = Status.none]);
 
   @override
   List<Object> get props => [name];

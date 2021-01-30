@@ -18,6 +18,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:productivity_tracker/blocs/projects/projects_bloc.dart';
 import 'package:productivity_tracker/db/database.dart';
+import 'package:productivity_tracker/db/tables/projects.dart';
 import 'package:productivity_tracker/router.dart';
 import 'package:productivity_tracker/theme/styles.dart';
 import 'package:productivity_tracker/widgets/bottom_sheets/create_project_modal.dart';
@@ -93,6 +94,29 @@ class _ProjectListItem extends StatelessWidget {
   _ProjectListItem({Key key, @required this.project, @required this.onTap})
       : super(key: key);
 
+  Text _mapStatusToString(Status status, TextStyle style) {
+    String text = StatusName[status];
+    switch (status) {
+      case Status.completed:
+        return Text(
+          text,
+          style: style.copyWith(color: Colors.green),
+        );
+      case Status.inprogress:
+        return Text(
+          text,
+          style: style.copyWith(color: Colors.yellow[800]),
+        );
+      case Status.pending:
+        return Text(
+          text,
+          style: style.copyWith(color: Colors.orange[800]),
+        );
+      default:
+        return Text('');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return InkWell(
@@ -100,17 +124,26 @@ class _ProjectListItem extends StatelessWidget {
       child: Container(
         padding: EdgeInsets.fromLTRB(30.0, 15.0, 30.0, 15.0),
         child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Icon(
-              Icons.circle,
-              size: 10.0,
-              color: Colors.accents[_random.nextInt(Colors.accents.length)],
+            Row(
+              children: [
+                Icon(
+                  Icons.circle,
+                  size: 10.0,
+                  color: Colors.accents[_random.nextInt(Colors.accents.length)],
+                ),
+                SizedBox(width: 20.0),
+                Text(
+                  project.name,
+                  style: Theme.of(context).textTheme.subtitle1,
+                  softWrap: true,
+                ),
+              ],
             ),
-            SizedBox(width: 20.0),
-            Text(
-              project.name,
-              style: Theme.of(context).textTheme.subtitle1,
-              softWrap: true,
+            _mapStatusToString(
+              project.status,
+              Theme.of(context).textTheme.subtitle1.copyWith(fontSize: 14.0),
             ),
           ],
         ),

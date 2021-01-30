@@ -17,9 +17,24 @@ import 'package:productivity_tracker/db/database.dart';
 
 part 'projects.g.dart';
 
+enum Status {
+  none,
+  pending,
+  inprogress,
+  completed,
+}
+
+const Map<Status, String> StatusName = {
+  Status.none: "",
+  Status.pending: "Pending",
+  Status.inprogress: "In Progress",
+  Status.completed: "Completed",
+};
+
 class Projects extends Table {
   IntColumn get id => integer().autoIncrement()();
   TextColumn get name => text()();
+  IntColumn get status => intEnum<Status>()();
 }
 
 @UseDao(tables: [Projects])
@@ -38,14 +53,22 @@ class ProjectDao extends DatabaseAccessor<Database> with _$ProjectDaoMixin {
   Future deleteProject(Insertable<Project> proj) =>
       delete(projects).delete(proj);
 
-  Future<Project> createAndInsertProject(String name) {
+  Future<Project> createAndInsertProject({
+    @required String name,
+    @required Status status,
+  }) {
     return insertProject(
       ProjectsCompanion(
         name: Value(name),
+        status: Value(status),
       ),
     ).then(
       (id) {
-        return Project(id: id, name: name);
+        return Project(
+          id: id,
+          name: name,
+          status: status,
+        );
       },
     );
   }

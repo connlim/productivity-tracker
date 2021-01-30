@@ -56,7 +56,10 @@ class ProjectsBloc extends Bloc<ProjectsEvent, ProjectsState> {
 
   Stream<ProjectsState> _mapProjectCreatedToState(ProjectCreated event) async* {
     if (state is ProjectsLoadSuccess) {
-      final project = await projectDao.createAndInsertProject(event.name);
+      final project = await projectDao.createAndInsertProject(
+        name: event.name,
+        status: event.status,
+      );
       final List<Project> updatedProjects =
           [project] + (state as ProjectsLoadSuccess).projects;
       yield ProjectsLoadSuccess(updatedProjects);

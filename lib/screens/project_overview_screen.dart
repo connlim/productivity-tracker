@@ -12,17 +12,21 @@
 //
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:productivity_tracker/blocs/filtered_sessions/filtered_sessions_cubit.dart';
 import 'package:productivity_tracker/blocs/projects/projects_bloc.dart';
 import 'package:productivity_tracker/blocs/sessions/sessions_bloc.dart';
 import 'package:productivity_tracker/db/database.dart';
+import 'package:productivity_tracker/db/tables/projects.dart';
 import 'package:productivity_tracker/router.dart';
 import 'package:productivity_tracker/theme/styles.dart';
 import 'package:productivity_tracker/widgets/bottom_sheets/confirmation_modal.dart';
+import 'package:productivity_tracker/widgets/bottom_sheets/edit_project_modal.dart';
 import 'package:productivity_tracker/widgets/bottom_sheets/text_input_modal.dart';
 import 'package:productivity_tracker/widgets/sessions_list_item.dart';
+import 'package:tuple/tuple.dart';
 
 class ProjectOverviewScreen extends StatefulWidget {
   final Project project;
@@ -49,16 +53,25 @@ class _ProjectOverviewScreenState extends State<ProjectOverviewScreen> {
           IconButton(
             icon: Icon(Icons.edit),
             onPressed: () {
-              showTextInputModal(
+              showEditProjectModal(
                 context: context,
-                title: "Edit Project",
-                label: "Name",
                 initial: project.name,
-              ).then((name) {
-                if (project.name != name && name != null) {
+                status: project.status,
+              ).then((Tuple2<String, Status> results) {
+                String newName = results.item1;
+                Status newStatus = results.item2;
+                if (project.name != newName && newName != null) {
                   // Project name updated
                   setState(() {
-                    project = project.copyWith(name: name);
+                    project = project.copyWith(name: newName);
+                    BlocProvider.of<ProjectsBloc>(context).add(ProjectUpdated(
+                      project: project,
+                    ));
+                  });
+                }
+                if (project.status != newStatus && newStatus != null) {
+                  setState(() {
+                    project = project.copyWith(status: newStatus);
                     BlocProvider.of<ProjectsBloc>(context).add(ProjectUpdated(
                       project: project,
                     ));

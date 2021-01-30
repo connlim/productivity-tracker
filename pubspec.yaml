@@ -33,6 +33,7 @@ dependencies:
   intl: ^0.16.1
   sweetsheet: ^0.2.0
   flutter_time_picker_spinner: ^1.0.6+1
+  tuple: ^1.0.3
 
 dev_dependencies:
   flutter_test:
