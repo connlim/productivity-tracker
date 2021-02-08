@@ -33,7 +33,10 @@ class ThemedFAB extends StatelessWidget {
       heroTag: null,
       label: Text(
         title.toUpperCase(),
-        style: TextStyle(color: Colors.white),
+        style: TextStyle(
+          color: Colors.white,
+          fontWeight: FontWeight.w800,
+        ),
       ),
       icon: Icon(
         iconData,

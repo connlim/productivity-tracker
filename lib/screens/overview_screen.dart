@@ -66,7 +66,7 @@ class _OverviewScreenState extends State<OverviewScreen> {
                 child: Column(
                   children: [
                     Padding(
-                      padding: const EdgeInsets.fromLTRB(6.0, 6.0, 6.0, 6.0),
+                      padding: const EdgeInsets.fromLTRB(6.0, 16.0, 6.0, 16.0),
                       child: timer,
                     ),
                   ],

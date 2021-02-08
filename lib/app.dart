@@ -17,6 +17,7 @@ import 'package:flutter/material.dart';
 import 'package:productivity_tracker/screens/overview_screen.dart';
 import 'package:productivity_tracker/screens/projects_list_screen.dart';
 import 'package:productivity_tracker/tab_item.dart';
+import 'package:productivity_tracker/theme/styles.dart';
 
 class App extends StatefulWidget {
   @override
@@ -69,6 +70,8 @@ class AppState extends State<App> {
         // Bottom navigation
         bottomNavigationBar: BottomNavigationBar(
           currentIndex: currentTab,
+          showSelectedLabels: false,
+          showUnselectedLabels: false,
           items: tabs
               .map(
                 (e) => BottomNavigationBarItem(

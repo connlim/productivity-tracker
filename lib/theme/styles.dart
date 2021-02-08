@@ -33,6 +33,7 @@ TextTheme _buildTextTheme(TextTheme base) {
     headline1: base.headline1.copyWith(
       fontFamily: 'GoogleSans',
       fontSize: 80.0,
+      fontWeight: FontWeight.w100,
     ),
     headline3: base.headline2.copyWith(
       fontFamily: 'GoogleSans',
@@ -40,6 +41,8 @@ TextTheme _buildTextTheme(TextTheme base) {
     ),
     headline6: base.headline6.copyWith(
       fontFamily: 'GoogleSans',
+      fontWeight: FontWeight.w700,
+      fontSize: 24.0,
     ),
   );
 }
@@ -64,11 +67,10 @@ ThemeData _buildLightTheme() {
     ),
     iconTheme: IconThemeData(color: Colors.white),
     canvasColor: Colors.grey[100],
-    // appBarTheme: AppBarTheme(
-    //   color: Colors.white.withOpacity(0.6),
-    //   textTheme: TextTheme(headline3: ),
-    //   elevation: 0,
-    // ),
+    appBarTheme: AppBarTheme(
+      color: Colors.white.withOpacity(0.6),
+      centerTitle: true,
+    ),
   );
 
   return base.copyWith(
