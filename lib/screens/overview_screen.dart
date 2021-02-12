@@ -17,10 +17,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:productivity_tracker/blocs/sessions/sessions_bloc.dart';
 import 'package:productivity_tracker/blocs/timer/timer_cubit.dart';
-import 'package:productivity_tracker/db/database.dart';
 import 'package:productivity_tracker/router.dart';
 import 'package:productivity_tracker/theme/styles.dart';
-import 'package:productivity_tracker/widgets/sessions_list_item.dart';
+import 'package:productivity_tracker/widgets/sessions_list.dart';
 import 'package:productivity_tracker/widgets/themed_fab.dart';
 import 'package:productivity_tracker/widgets/timer.dart';
 
@@ -57,32 +56,40 @@ class _OverviewScreenState extends State<OverviewScreen> {
             mainAxisAlignment: MainAxisAlignment.start,
             children: <Widget>[
               Container(
-                padding: EdgeInsets.all(10.0),
-                margin: EdgeInsets.fromLTRB(10.0, 10.0, 10.0, 10.0),
-                constraints: const BoxConstraints(minWidth: double.infinity),
+                padding: EdgeInsets.fromLTRB(24.0, 24.0, 24.0, 12.0),
+                margin: EdgeInsets.fromLTRB(16.0, 16.0, 16.0, 8.0),
                 decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(20.0),
+                  border: Border.all(
+                    color: Color(0xFFDDDDDD),
+                    width: 1.5,
+                  ),
+                  borderRadius: BorderRadius.circular(10.0),
                 ),
                 child: Column(
                   children: [
-                    Padding(
-                      padding: const EdgeInsets.fromLTRB(6.0, 16.0, 6.0, 16.0),
+                    Container(
+                      constraints:
+                          const BoxConstraints(minWidth: double.infinity),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(20.0),
+                      ),
+                      alignment: Alignment.center,
                       child: timer,
+                    ),
+                    SizedBox(height: 10.0),
+                    FlatButton.icon(
+                      icon: Icon(Icons.add),
+                      label: Text('Create Session'),
+                      onPressed: () => Navigator.of(
+                        context,
+                        rootNavigator: true,
+                      ).pushNamed(
+                        AppRouter.createSessionRoute,
+                      ),
                     ),
                   ],
                 ),
               ),
-              OutlineButton.icon(
-                icon: Icon(Icons.add),
-                label: Text('Create Session'),
-                onPressed: () => Navigator.of(
-                  context,
-                  rootNavigator: true,
-                ).pushNamed(
-                  AppRouter.createSessionRoute,
-                ),
-              ),
-              SizedBox(height: 10.0),
               _SessionsListView(scrollController),
             ],
           ),
@@ -107,35 +114,9 @@ class _SessionsListView extends StatelessWidget {
           return Container(child: Text('Loading...'));
         } else if (state is SessionsLoadSuccess) {
           final sessions = state.allSessions;
-          // Sort end time in descending order
-          sessions.sort((s1, s2) {
-            if (s1.end == null) {
-              return -1;
-            } else if (s2.end == null) {
-              return 1;
-            }
-            return s2.end.compareTo(s1.end);
-          });
-          return ListView.builder(
-            padding: EdgeInsets.zero,
-            scrollDirection: Axis.vertical,
-            controller: scrollController,
-            shrinkWrap: true,
-            itemCount: sessions.length,
-            itemBuilder: (context, index) {
-              final Session session = sessions[index];
-              return SessionsListItem(
-                session: session,
-                isFirstItem: index == 0,
-                onTap: () => Navigator.of(
-                  context,
-                  rootNavigator: true,
-                ).pushNamed(
-                  AppRouter.editSessionRoute,
-                  arguments: EditSessionRouteArguments(session: session),
-                ),
-              );
-            },
+          return SessionsList(
+            sessions: sessions,
+            scrollController: scrollController,
           );
         } else {
           return Container(child: Text('Failed'));

@@ -17,7 +17,81 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:productivity_tracker/blocs/projects/projects_bloc.dart';
 import 'package:productivity_tracker/db/database.dart';
+import 'package:productivity_tracker/router.dart';
 import 'package:productivity_tracker/utils/date_utils.dart';
+
+class SessionsList extends StatelessWidget {
+  final List<Session> sessions;
+  final ScrollController scrollController;
+
+  SessionsList({
+    @required this.sessions,
+    @required this.scrollController,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    // Sort end time in descending order
+    sessions.sort((s1, s2) {
+      if (s1.start == null) {
+        return -1;
+      } else if (s2.start == null) {
+        return 1;
+      }
+      return s2.start.compareTo(s1.start);
+    });
+    List<int> newSessions = [];
+    DateTime currDate;
+    for (int i = 0; i < sessions.length; i++) {
+      DateTime sessionDate = sessions[i].start;
+      if (currDate == null ||
+          currDate.year != sessionDate.year ||
+          currDate.month != sessionDate.month ||
+          currDate.day != sessionDate.day) {
+        currDate = sessionDate;
+        newSessions.add(-1);
+      }
+      newSessions.add(i);
+    }
+    return ListView.builder(
+      padding: EdgeInsets.zero,
+      scrollDirection: Axis.vertical,
+      controller: scrollController,
+      shrinkWrap: true,
+      itemCount: newSessions.length,
+      itemBuilder: (context, index) {
+        int pos = newSessions[index];
+        if (pos == -1) {
+          final String date = DateFormat.MMMMEEEEd()
+              .format(sessions[newSessions[index + 1]].start);
+          return Padding(
+            padding: const EdgeInsets.fromLTRB(25.0, 40.0, 30.0, 20.0),
+            child: Text(
+              date,
+              style: Theme.of(context).textTheme.headline5.copyWith(
+                    fontSize: 18.0,
+                    fontWeight: FontWeight.w600,
+                    color: Theme.of(context).accentColor,
+                  ),
+            ),
+          );
+        }
+        final Session session = sessions[pos];
+        return SessionsListItem(
+          session: session,
+          isFirstItem: index == 0,
+          onTap: () => Navigator.of(
+            context,
+            rootNavigator: true,
+          ).pushNamed(
+            AppRouter.editSessionRoute,
+            arguments: EditSessionRouteArguments(session: session),
+          ),
+        );
+      },
+    );
+  }
+}
 
 class SessionsListItem extends StatelessWidget {
   final void Function() onTap;
@@ -36,8 +110,7 @@ class SessionsListItem extends StatelessWidget {
   }) : super(key: key);
 
   String _formatStartEndDates(DateTime start, DateTime end) {
-    final String startText =
-        DateFormat.MMMd().addPattern('jm', ', ').format(session.start);
+    final String startText = DateFormat.jm().format(session.start);
 
     String endText;
     if (end == null) {
@@ -64,7 +137,7 @@ class SessionsListItem extends StatelessWidget {
     return DecoratedBox(
       decoration: BoxDecoration(
         border: Border(
-          top: isFirstItem ? borderSide : BorderSide.none,
+          top: borderSide,
           bottom: borderSide,
         ),
       ),
@@ -74,9 +147,9 @@ class SessionsListItem extends StatelessWidget {
         },
         child: Container(
           padding: EdgeInsets.fromLTRB(
-            30.0,
+            25.0,
             showingProject ? 20.0 : 22.0,
-            30.0,
+            25.0,
             showingProject ? 20.0 : 22.0,
           ),
           child: Row(

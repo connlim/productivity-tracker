@@ -69,9 +69,8 @@ class AppState extends State<App> {
         ),
         // Bottom navigation
         bottomNavigationBar: BottomNavigationBar(
+          backgroundColor: Theme.of(context).scaffoldBackgroundColor,
           currentIndex: currentTab,
-          showSelectedLabels: false,
-          showUnselectedLabels: false,
           items: tabs
               .map(
                 (e) => BottomNavigationBarItem(

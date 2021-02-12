@@ -42,7 +42,7 @@ TextTheme _buildTextTheme(TextTheme base) {
     headline6: base.headline6.copyWith(
       fontFamily: 'GoogleSans',
       fontWeight: FontWeight.w700,
-      fontSize: 24.0,
+      fontSize: 20.0,
     ),
   );
 }
@@ -71,6 +71,7 @@ ThemeData _buildLightTheme() {
       color: Colors.white.withOpacity(0.6),
       centerTitle: true,
     ),
+    scaffoldBackgroundColor: Color(0xFFFAFAFA),
   );
 
   return base.copyWith(

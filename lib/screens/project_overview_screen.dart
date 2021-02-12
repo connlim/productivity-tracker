@@ -24,8 +24,7 @@ import 'package:productivity_tracker/router.dart';
 import 'package:productivity_tracker/theme/styles.dart';
 import 'package:productivity_tracker/widgets/bottom_sheets/confirmation_modal.dart';
 import 'package:productivity_tracker/widgets/bottom_sheets/edit_project_modal.dart';
-import 'package:productivity_tracker/widgets/bottom_sheets/text_input_modal.dart';
-import 'package:productivity_tracker/widgets/sessions_list_item.dart';
+import 'package:productivity_tracker/widgets/sessions_list.dart';
 import 'package:tuple/tuple.dart';
 
 class ProjectOverviewScreen extends StatefulWidget {
