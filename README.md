@@ -42,4 +42,4 @@ flutter packages pub run build_runner build # generate dart files
 flutter run # run in debug mode
 ```
 
-If you change any files in `/lib/db/`, be sure to run `flutter packages pub run build_runner build` to regenerate the `.g.dart` files.
+If you change any files in `lib/db`, be sure to rerun `flutter packages pub run build_runner build` to regenerate the `.g.dart` files.
