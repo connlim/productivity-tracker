@@ -99,18 +99,26 @@ class SessionsListItem extends StatelessWidget {
   final bool showProjectName;
   final bool showDividers;
   final bool isFirstItem;
+  final bool showDate;
 
   SessionsListItem({
     Key key,
     this.showProjectName = true,
     this.showDividers = true,
     this.isFirstItem = false,
+    this.showDate = false,
     @required this.session,
     @required this.onTap,
   }) : super(key: key);
 
   String _formatStartEndDates(DateTime start, DateTime end) {
-    final String startText = DateFormat.jm().format(session.start);
+    String startText;
+    if (showDate) {
+      startText =
+          DateFormat.MMMd().addPattern('jm', ', ').format(session.start);
+    } else {
+      startText = DateFormat.jm().format(session.start);
+    }
 
     String endText;
     if (end == null) {

@@ -142,6 +142,7 @@ class _SessionsListView extends StatelessWidget {
             itemBuilder: (context, index) => SessionsListItem(
               session: sessions[index],
               showProjectName: false,
+              showDate: true,
               onTap: () => _handleEditSession(context, sessions[index]),
             ),
           );
